@@ -559,7 +559,7 @@ allowing for saving and/or further processing.
 Alternatively, you can also use the surveys completely standalone and automatically download to a local JSON file. 
 Open the HTML survey in an editor (e.g., VSCode) and locate this section:
 
-```js
+```html
 <script>
 
   // ===============================================================
@@ -569,7 +569,6 @@ Open the HTML survey in an editor (e.g., VSCode) and locate this section:
   // === Global options ===
   const fileDownload = false;       // Set to true to auto-download JSON
   const ParticipantID = false;      // Set to true to show and record Participant/Condition fields
-
 ```
 Setting these booleans to `true` enables you to use the HTML surveys completely as standalone instruments that
 run in your browser and don't require any Javascript or Python applications. Just open the surveys in your browser
@@ -641,3 +640,4 @@ of the author(s) only and do not necessarily reflect those of the European Union
 Neither the European Union nor the granting authority can be held responsible
 
 for them.
+
