@@ -559,7 +559,7 @@ allowing for saving and/or further processing.
 Alternatively, you can also use the surveys completely standalone and automatically download to a local JSON file. 
 Open the HTML survey in an editor (e.g., VSCode) and locate this section:
 
-```html
+```js
 <script>
 
   // ===============================================================
@@ -639,4 +639,5 @@ Agreement No 101119527, and from the Swiss State Secretariat for Education,
 Research and Innovation (SERI). Views and opinions expressed are however those 
 of the author(s) only and do not necessarily reflect those of the European Union and SERI.
 Neither the European Union nor the granting authority can be held responsible
+
 for them.
