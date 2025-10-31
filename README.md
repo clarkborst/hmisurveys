@@ -86,17 +86,18 @@ If you use or adapt this survey framework in your research, please cite it as fo
 
 #### APA format
 > Borst, C. (2025). *Modular Open-Source Survey Framework for Human–Machine Interaction Research.*  
-> AI4REALNET Project. Available at: [https://github.com/ai4realnet/survey-framework](https://github.com/ai4realnet/survey-framework)
+> Delft University of Technology. Available at: [https://github.com/clarkborst/hmisurveys](https://github.com/clarkborst/hmisurveys)
 
 #### BibTeX
 ```bibtex
-@misc{Borst_SurveyFramework_2025,
+@misc{Borst_HMISurveyFramework_2025,
   author       = {Clark Borst},
   title        = {Modular Open-Source Survey Framework for Human–Machine Interaction Research},
   year         = {2025},
-  publisher    = {AI4REALNET Project},
+  publisher    = {{D}elft {U}niversity of {T}echnology},
   doi          = {},
-  howpublished = {\url{https://github.com/ai4realnet/survey-framework}},
+  howpublished = {\url{https://github.com/clarkborst/hmisurveys}},
+  url          = {\url{https://github.com/clarkborst/hmisurveys}},
   note         = {GPL-3 license.}
 }
 ```
@@ -569,6 +570,7 @@ Open the HTML survey in an editor (e.g., VSCode) and locate this section:
   // === Global options ===
   const fileDownload = false;       // Set to true to auto-download JSON
   const ParticipantID = false;      // Set to true to show and record Participant/Condition fields
+
 ```
 Setting these booleans to `true` enables you to use the HTML surveys completely as standalone instruments that
 run in your browser and don't require any Javascript or Python applications. Just open the surveys in your browser
@@ -631,13 +633,10 @@ window.addEventListener("message", e => {
 
 ### Acknowledgements
 
-Part of this work has been conducted within the AI4REALNET (AI for REAL-world
-NETwork operation) project (https://ai4realnet.eu/), which received funding from the European
-Union's Horizon Europe Research and Innovation programme under the Grant
-Agreement No 101119527, and from the Swiss State Secretariat for Education,
+Part of this work has been conducted within the AI4REALNET (AI for REAL-world 
+NETwork operation) project (https://ai4realnet.eu/), which received funding from the European 
+Union's Horizon Europe Research and Innovation programme under the Grant 
+Agreement No 101119527, and from the Swiss State Secretariat for Education, 
 Research and Innovation (SERI). Views and opinions expressed are however those 
 of the author(s) only and do not necessarily reflect those of the European Union and SERI.
-Neither the European Union nor the granting authority can be held responsible
-
-for them.
-
+Neither the European Union nor the granting authority can be held responsible for them.
