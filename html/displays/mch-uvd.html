@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Modified Cooper–Harper Handling / Usability Rating</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 30px;
+    background: #fafafa;
+  }
+  h2 { text-align: center; margin-bottom: 5px; }
+  p.intro { text-align:center; max-width: 780px; margin: 0 auto 20px; }
+  .flow {
+    max-width: 780px;
+    margin: 0 auto;
+    border: 1px solid #bbb;
+    background: #fff;
+    padding: 15px 20px 25px;
+    border-radius: 10px;
+  }
+  .diamond {
+    margin: 12px auto;
+    padding: 10px 15px;
+    border: 1px solid #444;
+    background: #f8f8f8;
+    width: 280px;
+    text-align: center;
+    border-radius: 6px;
+  }
+  .answers label {
+    margin: 0 8px;
+    cursor: pointer;
+  }
+  .arrow {
+    text-align: center;
+    font-size: 22px;
+    color: #555;
+  }
+  .hidden { display: none; }
+
+  /* subscale panel */
+  .subscale {
+    margin-top: 25px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #f4f4f4;
+    padding: 10px 15px;
+  }
+  .subscale h3 {
+    margin-top: 0;
+  }
+  .subscale table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .subscale th, .subscale td {
+    border: 1px solid #ddd;
+    padding: 6px 8px;
+    vertical-align: top;
+  }
+  .rate-btn {
+    margin-top: 20px;
+    padding: 8px 16px;
+    background: #0077cc;
+    border: none;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .rate-btn:hover { background: #005fa3; }
+
+  #finalResult {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  @media print {
+    body { background:#fff; margin:0; }
+    .rate-btn { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<h2>Modified Cooper Harper for Assessing Unmanned Vehicle Displays</h2>
+<p class="intro">
+  Follow the boxes from top to bottom. Answer each question <strong>Yes</strong> or <strong>No</strong>.
+  When the path is determined, choose the rating from the corresponding group.
+</p>
+
+<!-- Participant info fields (shown only if ParticipantID == true) -->
+<div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+  <label for="pid"><strong>Participant ID:</strong></label>
+  <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+  <label for="cond"><strong>Condition ID:</strong></label>
+  <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+</div>
+
+<div class="flow">
+  <!-- Q1 -->
+  <div class="diamond" id="q1">
+    <strong>1. Can the mission task be safely completed?</strong>
+    <div class="answers">
+      <label><input type="radio" name="q1" value="yes"> Yes</label>
+      <label><input type="radio" name="q1" value="no"> No</label>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- Q2 -->
+  <div class="diamond hidden" id="q2">
+    <strong>2. Does the display aid mission task completion?</strong>
+    <div class="answers">
+      <label><input type="radio" name="q2" value="yes"> Yes</label>
+      <label><input type="radio" name="q2" value="no"> No</label>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- Q3 -->
+  <div class="diamond hidden" id="q3">
+    <strong>3. Does the display promote effective mission re-planning?</strong>
+    <div class="answers">
+      <label><input type="radio" name="q3" value="yes"> Yes</label>
+      <label><input type="radio" name="q3" value="no"> No</label>
+    </div>
+  </div>
+
+  <!-- === SUBSCALES === -->
+
+  <!-- 10: Improvement mandatory -->
+  <div class="subscale hidden" id="grp9_10">
+    <h3>Choose one: Mandatory Redesign (9-10)</h3>
+    <table>
+      <tr><th>Rating</th><th>Description</th><th>Select</th></tr>
+      <tr>
+        <td><strong>9</strong></td>
+        <td><strong>Mode Confusion.</strong> Using the display to act upon decisions is
+        not straightforward or intuitive. Display affordances to perform
+        tasks are difficult to find or use, or are easy to incorrectly use.</td>
+        <td><input type="radio" name="r910" value="9"></td>
+      </tr>
+      <tr>
+        <td><strong>10</strong></td>
+        <td><strong>Flawed Information Retrieval</strong>. Display is missing critical information, essential
+        information cannot be located, or retrieval time makes information irrelevant.</td>
+        <td><input type="radio" name="r910" value="10"></td>
+      </tr>
+    </table>
+    <button class="rate-btn" id="btn910">Confirm</button>
+  </div>
+
+  <!-- 5–8: Major deficiencies -->
+  <div class="subscale hidden" id="grp5_8">
+    <h3>Choose one: Deficiencies require improvement (5–8)</h3>
+    <table>
+      <tr><th>Rating</th><th>Description</th><th>Select</th></tr>
+      <tr>
+        <td><strong>5</strong></td>
+        <td><strong>Inefficient Action Implementation.</strong> A multiple-step process
+        is needed to execute decisions, or there are not enough affordance
+        to take action in a timely manner.</td>
+        <td><input type="radio" name="r58" value="5"></td>
+      </tr>
+      <tr>
+        <td><strong>6</strong></td>
+        <td><strong>No Information Aggregation.</strong> Display does not aggregate information
+          needed for tasks. Operators must determine, search for, and derive
+          critical information relationships.</td>
+        <td><input type="radio" name="r58" value="6"></td>
+      </tr>
+      <tr>
+        <td><strong>7</strong></td>
+        <td><strong>Poor Task Switching Support.</strong> Display does not highlight the status
+          of a resumed task and the changes that occur while operator
+          attention is away from the task.</td>
+        <td><input type="radio" name="r58" value="7"></td>
+      </tr>
+      <td><strong>8</strong></td>
+      <td><strong>Poor Attention Direction.</strong> Distracting or confusing display elements
+        interfere with information acquisition. Automated alerts fail to
+      direct operator attention in a timely manner.</td>
+      <td><input type="radio" name="r58" value="8"></td>
+      </tr>
+    </table>
+    <button class="rate-btn" id="btn58">Confirm Selection</button>
+  </div>
+
+  <!-- 3–4: Deficiencies warrant improvement -->
+  <div class="subscale hidden" id="grp3_4">
+    <h3>Choose one: Deficiencies warrant improvement (3–4)</h3>
+    <table>
+      <tr><th>Rating</th><th>Description</th><th>Select</th></tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td><strong>Inflexible Decision Support.</strong> Display provides some level of
+        decision support, but does not allow for operator customization of
+        constraints and requirements for generating different decision options.</td>
+        <td><input type="radio" name="r34" value="3"></td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td><strong>Insufficient Decision Aiding.</strong> Display does not provide multiple
+          decision options, predict decision consequences, or convey uncertainty
+          information.</td>
+        <td><input type="radio" name="r34" value="4"></td>
+      </tr>
+    </table>
+    <button class="rate-btn" id="btn34">Confirm Selection</button>
+  </div>
+
+  <!-- 1–3: Satisfactory / desirable -->
+  <div class="subscale hidden" id="grp1_2">
+    <h3>Choose one: Display is acceptable (1–2)</h3>
+    <table>
+      <tr><th>Rating</th><th>Description</th><th>Select</th></tr>
+      <tr>
+        <td><strong>1</strong></td>
+        <td><strong>Excellent & Highly Desired.</strong> Operator is not compensating for
+        display properties.</td>
+        <td><input type="radio" name="r12" value="1"></td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td><strong>Good With Negligible Deficiencies.</strong> Display has minor issues of
+        preference that do not hinder performance.</td>
+        <td><input type="radio" name="r12" value="2"></td>
+      </tr>
+    </table>
+    <button class="rate-btn" id="btn12">Confirm Selection</button>
+  </div>
+
+  <div id="finalResult" class="hidden"></div>
+
+</div><!-- /flow -->
+
+<script>
+
+  // ===============================================================
+  // === CONFIGURATION =============================================
+  // ===============================================================
+
+  // === Global options ===
+  const fileDownload = false;       // Set to true to auto-download JSON
+  const ParticipantID = false;      // Set to true to show Participant/Condition fields
+
+  const q1 = document.getElementById("q1");
+  const q2 = document.getElementById("q2");
+  const q3 = document.getElementById("q3");
+  const grp10 = document.getElementById("grp9_10");
+  const grp79 = document.getElementById("grp5_8");
+  const grp46 = document.getElementById("grp3_4");
+  const grp13 = document.getElementById("grp1_2");
+  const finalRes = document.getElementById("finalResult");
+
+  // === Show participant fields if enabled ===
+  if (ParticipantID) {
+    document.getElementById("participantInfo").style.display = "block";
+  }
+
+  function hideAllGroups() {
+    grp10.classList.add("hidden");
+    grp79.classList.add("hidden");
+    grp46.classList.add("hidden");
+    grp13.classList.add("hidden");
+    finalRes.classList.add("hidden");
+  }
+
+  // Q1: Is it controllable?
+  document.querySelectorAll('input[name="q1"]').forEach(el => {
+    el.addEventListener("change", e => {
+      hideAllGroups();
+      if (e.target.value === "no") {
+        // straight to 10
+        grp10.classList.remove("hidden");
+        q2.classList.add("hidden");
+        q3.classList.add("hidden");
+      } else {
+        // go to Q2
+        q2.classList.remove("hidden");
+        q3.classList.add("hidden");
+      }
+    });
+  });
+
+  // Q2: Is adequate performance attainable with tolerable workload?
+  document.querySelectorAll('input[name="q2"]').forEach(el => {
+    el.addEventListener("change", e => {
+      hideAllGroups();
+      if (e.target.value === "no") {
+        // go to 7-9
+        grp79.classList.remove("hidden");
+        q3.classList.add("hidden");
+      } else {
+        // go to Q3
+        q3.classList.remove("hidden");
+      }
+    });
+  });
+
+  // Q3: Is it satisfactory without improvement?
+  document.querySelectorAll('input[name="q3"]').forEach(el => {
+    el.addEventListener("change", e => {
+      hideAllGroups();
+      if (e.target.value === "no") {
+        // 4-6
+        grp46.classList.remove("hidden");
+      } else {
+        // 1-3
+        grp13.classList.remove("hidden");
+      }
+    });
+  });
+
+  // Confirm buttons
+  document.getElementById("btn58").addEventListener("click", () => {
+    const chosen = document.querySelector('input[name="r58"]:checked');
+    if (!chosen) { alert("Please select a rating (5–8)."); return; }
+    finish(Number(chosen.value));
+  });
+
+  document.getElementById("btn34").addEventListener("click", () => {
+    const chosen = document.querySelector('input[name="r34"]:checked');
+    if (!chosen) { alert("Please select a rating (3–4)."); return; }
+
+    finish(Number(chosen.value));
+  });
+
+  document.getElementById("btn12").addEventListener("click", () => {
+    const chosen = document.querySelector('input[name="r12"]:checked');
+    if (!chosen) { alert("Please select a rating (1–2)."); return; }
+
+    finish(Number(chosen.value));
+  });
+
+  document.getElementById("btn910").addEventListener("click", () => {
+    const chosen = document.querySelector('input[name="r910"]:checked');
+    if (!chosen) { alert("Please select a rating (9–10)."); return; }
+    finish(Number(chosen.value));
+  });
+
+  function finish(rating) {
+    // === Capture optional participant info ===
+    let participantData = {};
+    if (ParticipantID) {
+      participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+      participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+    }
+
+    if (ParticipantID && (participantData.id === "anon" || participantData.condition === "none")) {
+      alert("Please enter both Participant ID and Condition ID.");
+      return;
+    }
+
+    if(!fileDownload) {
+      finalRes.textContent = `Final MCH-UVD Rating: ${rating}`;
+      finalRes.classList.remove("hidden");
+    }
+    else
+      document.body.innerText = "Thank you!";
+
+    window.top?.postMessage?.({success:true, rating: Number(rating)}, "*");
+
+    if (fileDownload) downloadResultsJSON({ success: true, participantData, rating: Number(rating) });
+  }
+
+  // === Optional local JSON file download ===
+  function downloadResultsJSON(results) {
+    const pid = results.participantData?.id || "anon";
+    const cond = results.participantData?.condition || "none";
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const filename = `mch-uvd_${pid}_${cond}_${timestamp}.json`;
+    const json = JSON.stringify(results, null, 2);
+
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NASA Task Load Index (Classic Layout)</title>
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 20px;
+}
+h2 { margin-top: 0; }
+.hidden { display: none; }
+
+table.scale {
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+}
+td.top1, td.top2, td.bottom {
+  width: 0.6cm;
+  height: 0.4cm;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+td.top1 {
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+}
+td.top2 {
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+}
+td.bottom {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  border-top: none;
+}
+td.heading {
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+}
+td.left {
+  font-size: 14px;
+}
+td.right {
+  font-size: 14px;
+  text-align: right;
+}
+td.def {
+  width: 12cm;
+  padding-left: 20px;
+  font-size: 12px;
+}
+td.selected {
+  background-color: #AAAAAA;
+}
+input.pair {
+  width: 5cm;
+  height: 1cm;
+  font-weight: bold;
+  font-size: 14px;
+}
+.next {
+  margin-top: 20px;
+  font-size: 14px;
+  padding: 8px 16px;
+}
+table.results {
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+table.results td, table.results th {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<section id="part1">
+  <h2>Task Questionnaire - Part 1</h2>
+  <p>Click on each scale at the point that best indicates your experience of the task.</p>
+
+  <!-- Participant info fields (shown only if ParticipantID == true) -->
+  <div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+    <label for="pid"><strong>Participant ID:</strong></label>
+    <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+    <label for="cond"><strong>Condition ID:</strong></label>
+    <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+  </div>
+
+  <div id="scales"></div>
+  <button class="next" id="btnPart1">Submit</button>
+</section>
+
+<section id="part4" class="hidden">
+  <h2>Results</h2>
+  <div id="results"></div>
+</section>
+
+<script>
+
+// ===============================================================
+// === CONFIGURATION =============================================
+// ===============================================================
+
+// === Global options ===
+const fileDownload = false;       // Set to true to auto-download JSON
+const ParticipantID = false;      // Set to true to show Participant/Condition fields
+
+const scales = [
+  { name: "Mental Demand", left: "Low", right: "High",
+    def: "How much mental and perceptual activity was required (e.g. thinking, deciding, calculating, remembering, looking, searching, etc)? Was the task easy or demanding, simple or complex, exacting or forgiving?" },
+  { name: "Physical Demand", left: "Low", right: "High",
+    def: "How much physical activity was required (e.g. pushing, pulling, turning, controlling, activating, etc)? Was the task easy or demanding, slow or brisk, slack or strenuous, restful or laborious?" },
+  { name: "Temporal Demand", left: "Low", right: "High",
+    def: "How much time pressure did you feel due to the rate of pace at which the tasks or task elements occurred? Was the pace slow and leisurely or rapid and frantic?" },
+  { name: "Performance", left: "Good", right: "Poor",
+    def: "How successful do you think you were in accomplishing the goals of the task set by the experimenter (or yourself)? How satisfied were you with your performance in accomplishing these goals?" },
+  { name: "Effort", left: "Low", right: "High",
+    def: "How hard did you have to work (mentally and physically) to accomplish your level of performance?" },
+  { name: "Frustration", left: "Low", right: "High",
+    def: "How insecure, discouraged, irritated, stressed and annoyed versus secure, gratified, content, relaxed and complacent did you feel during the task?" }
+];
+
+// === Capture optional participant info ===
+let participantData = {};
+
+const pairs = [
+  [4,3],[2,5],[2,4],[1,5],[3,5],[1,2],[1,3],[2,0],
+  [5,4],[3,0],[3,2],[0,4],[0,1],[4,1],[5,0]
+].sort(()=>Math.random()-0.5);
+
+const NUM = scales.length;
+const ratings = Array(NUM).fill(null);
+// const tally = Array(NUM).fill(0);
+// const weights = Array(NUM).fill(0);
+// let overall = 0, pairIndex = 0;
+
+const scalesDiv = document.getElementById("scales");
+const part1 = document.getElementById("part1");
+const part4 = document.getElementById("part4");
+const resultsDiv = document.getElementById("results");
+
+// === Show participant fields if enabled ===
+if (ParticipantID) {
+  document.getElementById("participantInfo").style.display = "block";
+}
+
+// === Draw classic clickable NASA-TLX scale ===
+function buildScale(i){
+  const s = scales[i];
+  let top="", bottom="", num=1;
+  for(let v=5;v<=100;v+=5){
+    top += `<td class="top${num}" data-idx="${i}" data-val="${v}"></td>`;
+    num = num===1 ? 2 : 1;
+  }
+  for(let v=5;v<=100;v+=5){
+    bottom += `<td class="bottom" data-idx="${i}" data-val="${v}"></td>`;
+  }
+  return `
+  <table><tr><td>
+    <table class="scale">
+      <tr><td colspan="20" class="heading">${s.name}</td></tr>
+      <tr>${top}</tr>
+      <tr>${bottom}</tr>
+      <tr>
+        <td colspan="10" class="left">${s.left}</td>
+        <td colspan="10" class="right">${s.right}</td>
+      </tr>
+    </table>
+  </td>
+  <td class="def">${s.def}</td></tr></table>`;
+}
+
+function renderScales(){
+  scalesDiv.innerHTML = scales.map((_,i)=>buildScale(i)).join("");
+  document.querySelectorAll("td[data-idx]").forEach(td=>{
+    td.addEventListener("click", e=>{
+      const i = +td.dataset.idx;
+      const v = +td.dataset.val;
+      select(i,v);
+    });
+  });
+}
+
+function select(i,v){
+  ratings[i]=v;
+  document.querySelectorAll(`td[data-idx="${i}"]`).forEach(td=>{
+    td.classList.remove("selected");
+    if(+td.dataset.val===v) td.classList.add("selected");
+  });
+}
+
+// === Navigation ===
+document.getElementById("btnPart1").addEventListener("click",()=>{
+  if(ratings.some(r=>r===null)){
+    alert("Please select a value for each scale!");
+    return;
+  }
+
+  if (ParticipantID) {
+    participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+    participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+  }
+
+  if (ParticipantID && (participantData.id === "anon" || participantData.condition === "none")) {
+    alert("Please enter both Participant ID and Condition ID.");
+    return;
+  }
+
+  part1.classList.add("hidden");
+  finish();
+});
+
+
+function finish(){
+  part4.classList.remove("hidden");
+  if(!fileDownload) {
+    let html = `
+    <table class="results">
+    <tr><th>Scale</th><th>Rating</tr>
+    ${scales.map((s, i) => `
+      <tr>
+        <td>${s.name}</td>
+        <td>${ratings[i]}</td>
+      </tr>`).join("")}
+    </table>
+    <p></p>`;
+    resultsDiv.innerHTML = html;
+  }
+  else
+    part4.outerText = "Thank you!";
+
+  const resultObj = {
+    success:true,
+    scales:scales.map((s,i)=>({name:s.name,rating:ratings[i]}))
+  };
+  window.top.postMessage(resultObj,"*");
+
+  if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
+}
+
+renderScales();
+
+// === Optional local JSON file download ===
+function downloadResultsJSON(results) {
+  const pid = results.participantData?.id || "anon";
+  const cond = results.participantData?.condition || "none";
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `tlx_simple_${pid}_${cond}_${timestamp}.json`;
+  const json = JSON.stringify(results, null, 2);
+
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+</script>
+</body>
+</html>

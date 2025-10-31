@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Trust in Automation Scale (Jian et al. 2000, with Subscales)</title>
+<style>
+  body {font-family:Arial,Helvetica,sans-serif;margin:20px;line-height:1.5;}
+  h2 {margin-top:0;}
+  table.scale {border-collapse:collapse;width:100%;max-width:850px;margin-top:1em;}
+  table.scale th,table.scale td{border:1px solid #ccc;padding:6px 10px;text-align:center;font-size:14px;}
+  table.scale th:first-child,table.scale td:first-child{text-align:left;width:55%;}
+  .next{margin-top:20px;font-size:15px;padding:8px 16px;}
+  .hidden{display:none;}
+  #results table{margin-top:1em;border-collapse:collapse;}
+  #results th,#results td{border:1px solid #ccc;padding:5px 10px;}
+</style>
+</head>
+<body>
+  <section id="part1">
+    <h2>Trust in Automation Questionnaire</h2>
+    <p>
+      Please rate how much you agree with the following statements about the automated system you interacted with.
+      Use a scale from <strong>1 = Strongly Disagree</strong> to <strong>7 = Strongly Agree</strong>.
+    </p>
+
+    <!-- Participant info fields (shown only if ParticipantID == true) -->
+    <div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+      <label for="pid"><strong>Participant ID:</strong></label>
+      <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+      <label for="cond"><strong>Condition ID:</strong></label>
+      <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+    </div>
+
+    <table class="scale" id="trustTable">
+      <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Strongly<br>Disagree</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Strongly<br>Agree</th>
+        </tr>
+      </thead>
+      <tbody id="itemsBody"></tbody>
+    </table>
+
+    <button class="next" id="submitBtn">Submit</button>
+  </section>
+
+  <section id="results" class="hidden">
+    <h2>Results</h2>
+    <div id="resultsContent"></div>
+  </section>
+
+<script>
+
+// ===============================================================
+// === CONFIGURATION =============================================
+// ===============================================================
+
+// === Global options ===
+const fileDownload = false;       // Set to true to auto-download JSON
+const ParticipantID = false;      // Set to true to show Participant/Condition fields
+
+
+/* === Jian et al. (2000) Items ===
+   Positive items → Trust subscale
+   Negative (reversed) items → Distrust subscale
+*/
+const items = [
+  "The system is dependable.",              // trust
+  "The system behaves in a consistent manner.", // trust
+  "I can trust the system.",                // trust
+  "The system is reliable.",                // trust
+  "I am confident in the system.",          // trust
+  "The system performs efficiently.",       // trust
+  "The system is deceptive.",               // distrust
+  "The system behaves unexpectedly.",       // distrust
+  "The system’s actions are misleading.",   // distrust
+  "I am suspicious of the system’s output.",// distrust
+  "The system acts in my best interest.",   // trust
+  "The system has integrity."               // trust
+];
+
+// 0-based indices of reversed items (Distrust subscale)
+const reversedItems = [6,7,8,9];
+
+// render Likert grid
+const tbody = document.getElementById("itemsBody");
+const ratings = {};
+items.forEach((text, i) => {
+  const tr = document.createElement("tr");
+  const tdLabel = document.createElement("td");
+  tdLabel.textContent = text;
+  tr.appendChild(tdLabel);
+  for (let val=1; val<=7; val++){
+    const td=document.createElement("td");
+    const radio=document.createElement("input");
+    radio.type="radio"; radio.name="q"+i; radio.value=val;
+    radio.addEventListener("change",()=>{ratings[i]=parseInt(val);});
+    td.appendChild(radio);
+    tr.appendChild(td);
+  }
+  tbody.appendChild(tr);
+});
+
+// === Capture optional participant info ===
+let participantData = {};
+
+
+// === Show participant fields if enabled ===
+if (ParticipantID) {
+  document.getElementById("participantInfo").style.display = "block";
+}
+
+document.getElementById("submitBtn").addEventListener("click",()=>{
+  if(Object.keys(ratings).length<items.length){
+    alert("Please answer all questions before submitting.");
+    return;
+  }
+
+  // === Capture optional participant info ===
+  let participantData = {};
+  if (ParticipantID) {
+    participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+    participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+  }
+
+  if (ParticipantID && (participantData.id === "anon" || participantData.condition === "none")) {
+    alert("Please enter both Participant ID and Condition ID.");
+    return;
+  } 
+
+  // score: reverse the distrust items
+  const scored = items.map((_,i)=>
+    reversedItems.includes(i)? 8 - ratings[i] : ratings[i]
+  );
+
+  const trustIdx = items.map((_,i)=>!reversedItems.includes(i)?i:null).filter(i=>i!==null);
+  const distrustIdx = reversedItems;
+
+  const trustMean = mean(trustIdx.map(i=>scored[i]));
+  const distrustMean = mean(distrustIdx.map(i=>scored[i]));
+  const overallMean = mean(scored);
+  const trustMinusDistrust = trustMean - (8 - distrustMean); // optional diff metric
+
+  // display
+  document.getElementById("part1").classList.add("hidden");
+  const res = document.getElementById("results");
+  res.classList.remove("hidden");
+
+  if(!fileDownload) {
+    let html = `<table><tr><th>Item</th><th>Raw</th><th>Score (reversed if needed)</th><th>Subscale</th></tr>`;
+    items.forEach((txt, i) => {
+      const sub = reversedItems.includes(i) ? "Distrust" : "Trust";
+      html += `<tr><td>${txt}</td><td>${ratings[i]}</td><td>${scored[i]}</td><td>${sub}</td></tr>`;
+    });
+    html += `</table>
+  <p><strong>Trust mean:</strong> ${trustMean.toFixed(2)} / 7<br>
+     <strong>Distrust mean (reversed):</strong> ${distrustMean.toFixed(2)} / 7<br>
+     <strong>Overall mean trust:</strong> ${overallMean.toFixed(2)} / 7<br>
+     <strong>Trust–Distrust difference:</strong> ${trustMinusDistrust.toFixed(2)}</p>`;
+    document.getElementById("resultsContent").innerHTML = html;
+  }
+  else
+    document.getElementById("results").outerText = "Thank you!";
+
+  // post message for embedding contexts
+  const resultObj = {
+    success:true,
+    trustMean,
+    distrustMean,
+    overallMean,
+    trustMinusDistrust,
+    items:items.map((txt,i)=>({
+      item:txt,
+      raw:ratings[i],
+      score:scored[i],
+      subscale:reversedItems.includes(i)?"distrust":"trust"
+    }))
+  };
+
+  window.top.postMessage({ success: true, participantData, resultObj }, "*");
+
+  if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
+});
+
+function mean(arr){return arr.reduce((a,b)=>a+b,0)/arr.length;}
+
+// === Optional local JSON file download ===
+function downloadResultsJSON(results) {
+  const pid = results.participantData?.id || "anon";
+  const cond = results.participantData?.condition || "none";
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `trust_${pid}_${cond}_${timestamp}.json`;
+  const json = JSON.stringify(results, null, 2);
+
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+</script>
+</body>
+</html>

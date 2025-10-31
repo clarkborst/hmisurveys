@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rating Scale Mental Effort (RSME)</title>
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    margin: 30px;
+  }
+
+  h2 { margin-bottom: 8px; }
+  p { max-width: 700px; margin: 0 auto 20px; font-size: 15px; }
+
+  .stage {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .scale-wrapper {
+    position: relative;
+    height: 480px;
+    width: 450px;
+  }
+
+  /* Main vertical line */
+  .scale-line {
+    position: absolute;
+    left: 100px;
+    top: 20px;
+    width: 2px;
+    height: 440px;
+    background: #000;
+  }
+
+  /* Major numeric ticks (every 10 units) */
+  .tick {
+    position: absolute;
+    left: calc(100px - 6px);
+    width: 12px;
+    height: 1px;
+    background: #000;
+  }
+
+  .num {
+    position: absolute;
+    left: 55px;
+    width: 30px;
+    font-size: 13px;
+    text-align: right;
+  }
+
+  /* Label anchor horizontal lines */
+  .anchor-line {
+    position: absolute;
+    left: 100px;
+    width: 70px;
+    height: 2px;
+    background: #000;
+  }
+
+  .label {
+    position: absolute;
+    left: 175px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  /* Draggable marker (square) */
+  .marker {
+    position: absolute;
+    left: calc(100px - 8px);
+    width: 16px;
+    height: 10px;
+    background: #2222225d;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    transform: translateY(-5px);
+    cursor: grab;
+    touch-action: none;
+  }
+  .marker:active { cursor: grabbing; }
+
+  .output {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 8px 18px;
+    font-size: 14px;
+  }
+
+  .hidden { display: none; }
+
+  .results {
+    border-collapse: collapse;
+    margin-top: 1em;
+  }
+  .results th, .results td {
+    border: 1px solid #ccc;
+    padding: 5px 8px;
+  }
+</style>
+</head>
+<body>
+
+<section id="part1">
+    <h2>Rating Scale Mental Effort (RSME)</h2>
+    <p>
+        Klik op de beoordelingsschaal of verplaats de marker om uw waargenomen <strong>mentale inspanning</strong> aan te geven.
+        Beschrijvende ankers zijn geplaatst op gevalideerde RSME-referentiepunten.
+    </p>
+
+    <!-- Participant info fields (shown only if ParticipantID == true) -->
+    <div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+      <label for="pid"><strong>Deelnemer ID:</strong></label>
+      <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+      <label for="cond"><strong>Conditie ID:</strong></label>
+      <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+    </div>
+
+    <div class="stage">
+    <div class="scale-wrapper" id="scale">
+        <div class="scale-line"></div>
+        <div class="marker" id="marker" tabindex="0"></div>
+    </div>
+    </div>
+
+    <div class="output">
+        Huidige beoordeling: <span id="val">0</span> / 150
+    </div>
+    <button id="submit">Indienen</button>
+</section>
+
+<section id="results" class="hidden">
+  <h2>Resultaat</h2>
+  <div id="resultsContent"></div>
+</section>
+
+<script>
+
+// ===============================================================
+// === CONFIGURATION =============================================
+// ===============================================================
+
+// === Global options ===
+const fileDownload = false;       // Set to true to auto-download JSON
+const ParticipantID = false;      // Set to true to show Participant/Condition fields
+
+
+// === Configuration ===
+const scale = document.getElementById("scale");
+const marker = document.getElementById("marker");
+const valEl = document.getElementById("val");
+
+const topY = 20;     // pixel position for 150
+const bottomY = 460; // pixel position for 0
+const range = 150;
+const height = bottomY - topY;
+
+// === Mapping functions ===
+function valueToY(v) {
+  const t = v / range;
+  return bottomY - t * height;
+}
+function yToValue(y) {
+  const clamped = Math.max(topY, Math.min(bottomY, y));
+  const t = (bottomY - clamped) / height;
+  return Math.round(t * range);
+}
+function setValue(v) {
+  const val = Math.max(0, Math.min(150, v));
+  const y = valueToY(val);
+  marker.style.top = y + "px";
+  valEl.textContent = val;
+  value = val;
+}
+
+// === Draw numeric ticks (every 10) ===
+for (let i = 0; i <= 150; i += 10) {
+  const y = valueToY(i);
+  const tick = document.createElement("div");
+  tick.className = "tick";
+  tick.style.top = `${y}px`;
+  scale.appendChild(tick);
+
+  const num = document.createElement("div");
+  num.className = "num";
+  num.textContent = i;
+  num.style.top = `${y - 6}px`;
+  scale.appendChild(num);
+}
+
+// === Add verbal anchors with horizontal lines ===
+const anchors = [
+  { val:113, text:"ONTZETTEND INSPANNEND" },
+  { val:102, text:"HEEL ERG INSPANNEND" },
+  { val:85, text:"ERG INSPANNEND" },
+  { val:72,  text:"BEHOORLIJK INSPANNEND" },
+  { val:56,  text:"TAMELIJK INSPANNEND" },
+  { val:37,  text:"ENIGSZINS INSPANNEND" },
+  { val:26,  text:"EEN BEETJE INSPANNEND" },
+  { val:13,  text:"NAUWELIJKS INSPANNEND" },
+  { val:2,   text:"HELEMAAL NIET INSPANNEND" }
+];
+
+for (const a of anchors) {
+  const y = valueToY(a.val);
+
+  // horizontal line
+  const line = document.createElement("div");
+  line.className = "anchor-line";
+  line.style.top = `${y}px`;
+  scale.appendChild(line);
+
+  // label text
+  const label = document.createElement("div");
+  label.className = "label";
+  label.textContent = a.text;
+  label.style.top = `${y - 8}px`;
+  scale.appendChild(label);
+}
+
+// === Interaction ===
+let value = 0;
+setValue(0);
+let dragging = false;
+
+function handlePointer(e) {
+  const rect = scale.getBoundingClientRect();
+  const pageY = e.touches ? e.touches[0].clientY : e.clientY;
+  const y = pageY - rect.top;
+  setValue(yToValue(y));
+}
+
+marker.addEventListener("mousedown", e => { dragging = true; e.preventDefault(); });
+marker.addEventListener("touchstart", e => { dragging = true; e.preventDefault(); }, {passive:false});
+window.addEventListener("mouseup", ()=> dragging = false);
+window.addEventListener("touchend", ()=> dragging = false);
+window.addEventListener("mousemove", e => { if(dragging) handlePointer(e); });
+window.addEventListener("touchmove", e => { if(dragging) handlePointer(e); }, {passive:false});
+scale.addEventListener("mousedown", handlePointer);
+scale.addEventListener("touchstart", handlePointer, {passive:false});
+
+// === Capture optional participant info ===
+let participantData = {};
+
+
+// === Show participant fields if enabled ===
+if (ParticipantID) {
+  document.getElementById("participantInfo").style.display = "block";
+}
+
+// === Submit ===
+document.getElementById("submit").addEventListener("click", ()=>{
+  const description = describeEffort(value);
+  const result = { success:true, rsmeScore:value, description };
+
+  // === Capture optional participant info ===
+  if (ParticipantID) {
+    participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+    participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+  }
+
+  if (ParticipantID && (participantData.id == "anon" || participantData.condition == "none")) {
+    alert("Voer zowel het deelnemers-ID als het conditie-ID in.");
+    return;
+  } 
+
+  document.getElementById("part1").classList.add("hidden");
+  const resultsSection = document.getElementById("results");
+  resultsSection.classList.remove("hidden");
+  if(!fileDownload) {
+        document.getElementById("resultsContent").innerHTML = `
+    <table class="results">
+      <tr><td>RSME score</td><td>${result.rsmeScore} (${description})</td></tr>
+    </table>
+  `;
+  }
+  else
+      document.getElementById("results").outerText = "Bedankt!";
+
+  window.top.postMessage({ success: true, participantData, result }, "*");
+
+  if (fileDownload) downloadResultsJSON({ success: true, participantData, result });
+
+});
+
+function describeEffort(v) {
+  if (v <= 2) return "Helemaal niet inspannend";
+  if (v <= 13) return "Nauwelijks inspannend";
+  if (v <= 26) return "Een beetje inspannend";
+  if (v <= 37) return "Enigszins inspannend";
+  if (v <= 56) return "Tamelijk inspannend";
+  if (v <= 72) return "Behoorlijk inspannend";
+  if (v <= 85) return "Erg inspannend";
+  if (v <= 102) return "Heel erg inspannend";
+  if (v <= 113) return "Ontzettend inspannend";
+  return "Buitengewoon inspannend";
+}
+
+// === Optional local JSON file download ===
+function downloadResultsJSON(results) {
+  const pid = results.participantData?.id || "anon";
+  const cond = results.participantData?.condition || "none";
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `rsme_${pid}_${cond}_${timestamp}.json`;
+  const json = JSON.stringify(results, null, 2);
+
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Technology Acceptance Questionnaire (TAM2)</title>
+<style>
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 20px;
+    line-height: 1.5;
+  }
+  h2 {
+    margin-top: 0;
+  }
+  table.scale {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 850px;
+    margin-top: 1em;
+  }
+  table.scale th, table.scale td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    text-align: center;
+    font-size: 14px;
+  }
+  table.scale th:first-child, table.scale td:first-child {
+    text-align: left;
+    width: 55%;
+  }
+  .next {
+    margin-top: 20px;
+    font-size: 15px;
+    padding: 8px 16px;
+  }
+  .hidden {
+    display: none;
+  }
+  #results table {
+    margin-top: 1em;
+    border-collapse: collapse;
+  }
+  #results th, #results td {
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+  }
+</style>
+</head>
+<body>
+  <section id="part1">
+    <h2>System Acceptance Questionnaire (TAM2)</h2>
+    <p>
+      Please indicate how much you agree with each statement about the automated support system you used.
+      Use a scale from <strong>1 = Strongly Disagree</strong> to <strong>7 = Strongly Agree</strong>.
+    </p>
+
+    <!-- Participant info fields (shown only if ParticipantID == true) -->
+    <div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+      <label for="pid"><strong>Participant ID:</strong></label>
+      <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+      <label for="cond"><strong>Condition ID:</strong></label>
+      <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+    </div>
+
+    <table class="scale" id="tamTable">
+      <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Strongly<br>Disagree</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Strongly<br>Agree</th>
+        </tr>
+      </thead>
+      <tbody id="itemsBody"></tbody>
+    </table>
+
+    <button class="next" id="submitBtn">Submit</button>
+  </section>
+
+  <section id="results" class="hidden">
+    <h2>Results</h2>
+    <div id="resultsContent"></div>
+  </section>
+
+<script>
+
+// ===============================================================
+// === CONFIGURATION =============================================
+// ===============================================================
+
+// === Global options ===
+const fileDownload = true;       // Set to true to auto-download JSON
+const ParticipantID = false;      // Set to true to show Participant/Condition fields
+
+
+// === TAM2 (Davis, Bagozzi & Warshaw, 1989; Venkatesh & Davis, 2000) adapted for AI systems ===
+const items = [
+  // Perceived Usefulness (PU)
+  { text: "Using the system improves my task performance.", scale: "PU" },
+  { text: "The system enhances the quality of my decisions.", scale: "PU" },
+  { text: "The system increases my productivity.", scale: "PU" },
+  { text: "The system makes my work more effective.", scale: "PU" },
+  { text: "Overall, the system is useful for completing my tasks.", scale: "PU" },
+
+  // Perceived Ease of Use (PEOU)
+  { text: "Learning to operate the system is easy for me.", scale: "PEOU" },
+  { text: "Interacting with the system is clear and understandable.", scale: "PEOU" },
+  { text: "I find the system easy to use.", scale: "PEOU" },
+  { text: "It is easy for me to become skillful at using the system.", scale: "PEOU" },
+  { text: "The system is flexible to interact with.", scale: "PEOU" },
+
+  // Behavioral Intention to Use (BI)
+  { text: "I intend to use the system frequently in the future.", scale: "BI" },
+  { text: "I will continue to use the system in my work.", scale: "BI" },
+  { text: "I would recommend using the system to others.", scale: "BI" }
+];
+
+const tbody = document.getElementById("itemsBody");
+const ratings = {};
+
+// Render items as Likert scale
+items.forEach((item, i) => {
+  const tr = document.createElement("tr");
+  const tdLabel = document.createElement("td");
+  tdLabel.textContent = item.text;
+  tr.appendChild(tdLabel);
+
+  for (let val = 1; val <= 7; val++) {
+    const td = document.createElement("td");
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "q" + i;
+    radio.value = val;
+    radio.addEventListener("change", () => {
+      ratings[i] = parseInt(val);
+    });
+    td.appendChild(radio);
+    tr.appendChild(td);
+  }
+  tbody.appendChild(tr);
+});
+
+// === Capture optional participant info ===
+let participantData = {};
+
+
+// === Show participant fields if enabled ===
+if (ParticipantID) {
+  document.getElementById("participantInfo").style.display = "block";
+}
+
+document.getElementById("submitBtn").addEventListener("click", () => {
+  if (Object.keys(ratings).length < items.length) {
+    alert("Please answer all questions before submitting.");
+    return;
+  }
+
+  // === Capture optional participant info ===
+  let participantData = {};
+  if (ParticipantID) {
+    participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+    participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+  }
+
+  if (ParticipantID && (participantData.id === "anon" || participantData.condition === "none")) {
+    alert("Please enter both Participant ID and Condition ID.");
+    return;
+  } 
+
+  // Compute means for each subscale
+  const puVals = items.filter(it => it.scale === "PU").map((it, i) => ratings[items.indexOf(it)]);
+  const peouVals = items.filter(it => it.scale === "PEOU").map((it, i) => ratings[items.indexOf(it)]);
+  const biVals = items.filter(it => it.scale === "BI").map((it, i) => ratings[items.indexOf(it)]);
+
+  const puMean = mean(puVals);
+  const peouMean = mean(peouVals);
+  const biMean = mean(biVals);
+  const overall = mean(Object.values(ratings));
+
+  document.getElementById("part1").classList.add("hidden");
+  const res = document.getElementById("results");
+  res.classList.remove("hidden");
+
+  if(!fileDownload) {
+    let html = `<table><tr><th>Item</th><th>Rating</th><th>Subscale</th></tr>`;
+    items.forEach((it, i) => {
+      html += `<tr><td>${it.text}</td><td>${ratings[i]}</td><td>${it.scale}</td></tr>`;
+    });
+    html += `</table>
+    <p><strong>Perceived Usefulness (PU) mean:</strong> ${puMean.toFixed(2)} / 7<br>
+       <strong>Perceived Ease of Use (PEOU) mean:</strong> ${peouMean.toFixed(2)} / 7<br>
+       <strong>Behavioral Intention to Use (BI) mean:</strong> ${biMean.toFixed(2)} / 7<br>
+       <strong>Overall Acceptance mean:</strong> ${overall.toFixed(2)} / 7</p>`;
+    document.getElementById("resultsContent").innerHTML = html;
+  }
+  else
+    document.getElementById("results").outerText = "Thank you!";
+
+  // Export JSON
+  const resultObj = {
+    success: true,
+    puMean,
+    peouMean,
+    biMean,
+    overall,
+    items: items.map((it, i) => ({
+      item: it.text,
+      scale: it.scale,
+      rating: ratings[i]
+    }))
+  };
+  window.top.postMessage({ success: true, participantData, resultObj }, "*");
+
+  if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
+
+});
+
+function mean(arr) {
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+
+// === Optional local JSON file download ===
+function downloadResultsJSON(results) {
+  const pid = results.participantData?.id || "anon";
+  const cond = results.participantData?.condition || "none";
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `acceptance_${pid}_${cond}_${timestamp}.json`;
+  const json = JSON.stringify(results, null, 2);
+
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+</script>
+</body>
+</html>

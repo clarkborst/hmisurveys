@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Situation Awareness Rating Scale (Endsley / SART)</title>
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 20px;
+  line-height: 1.5;
+}
+h2 { margin-top: 0; }
+table.scale {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+}
+table.scale th, table.scale td {
+  border: 1px solid #ccc;
+  padding: 8px 10px;
+  text-align: center;
+  font-size: 14px;
+}
+table.scale th:first-child, table.scale td:first-child {
+  text-align: left;
+  width: 45%;
+}
+.next {
+  margin-top: 20px;
+  font-size: 14px;
+  padding: 8px 16px;
+}
+.hidden { display: none; }
+.results {
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+.results th, .results td {
+  border: 1px solid #ccc;
+  padding: 5px 8px;
+}
+</style>
+</head>
+<body>
+
+<section id="part1">
+  <h2>Situation Awareness Assessment</h2>
+  <p>
+    Please rate each statement according to your experience during the task.  
+    Ratings use a 7-point scale (1 = Very Low, 7 = Very High).
+  </p>
+
+  <!-- Participant info fields (shown only if ParticipantID == true) -->
+  <div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+    <label for="pid"><strong>Participant ID:</strong></label>
+    <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+    <label for="cond"><strong>Condition ID:</strong></label>
+    <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+  </div>
+
+  <table class="scale" id="saTable">
+    <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Strongly<br>Disagree</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Strongly<br>Agree</th>
+        </tr>
+      </thead>
+    <tbody id="itemsBody"></tbody>
+  </table>
+
+  <button class="next" id="submitBtn">Submit</button>
+</section>
+
+<section id="results" class="hidden">
+  <h2>Results</h2>
+  <div id="resultsContent"></div>
+</section>
+
+<script>
+
+// ===============================================================
+// === CONFIGURATION =============================================
+// ===============================================================
+
+// === Global options ===
+const fileDownload = false;       // Set to true to auto-download JSON
+const ParticipantID = false;      // Set to true to show Participant/Condition fields
+
+// === Configurable items based on Endsley’s model ===
+// Level 1: Perception of elements
+// Level 2: Comprehension of current situation
+// Level 3: Projection of future status
+const questions = [
+  // --- Level 1: Perception ---
+  { text: "I was aware of all relevant aircraft, weather, and traffic conditions.", level: "Perception" },
+  { text: "I noticed important changes in the environment as they occurred.", level: "Perception" },
+  { text: "I missed key information that was important for my task.", level: "Perception", reverse: true },
+
+  // --- Level 2: Comprehension ---
+  { text: "I understood what was happening in the current airspace situation.", level: "Comprehension" },
+  { text: "I understood the implications of the current situation for my task.", level: "Comprehension" },
+  { text: "I was confused about the meaning of some information.", level: "Comprehension", reverse: true },
+
+  // --- Level 3: Projection ---
+  { text: "I could anticipate how the situation would evolve over time.", level: "Projection" },
+  { text: "I could predict what was likely to happen next.", level: "Projection" },
+  { text: "I had difficulty anticipating future events or conflicts.", level: "Projection", reverse: true },
+
+  // --- Optional: Global awareness ---
+  { text: "Overall, I had good situation awareness during the task.", level: "Overall" }
+];
+
+// === Generate dynamic table ===
+const tbody = document.getElementById("itemsBody");
+const responses = {};
+
+questions.forEach((q, i) => {
+  const tr = document.createElement("tr");
+  const tdLabel = document.createElement("td");
+  tdLabel.textContent = q.text;
+  tr.appendChild(tdLabel);
+
+  for (let v = 1; v <= 7; v++) {
+    const td = document.createElement("td");
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "q" + i;
+    radio.value = v;
+    radio.addEventListener("change", () => { responses[i] = parseInt(v); });
+    td.appendChild(radio);
+    tr.appendChild(td);
+  }
+  tbody.appendChild(tr);
+});
+
+// === Capture optional participant info ===
+let participantData = {};
+
+
+// === Show participant fields if enabled ===
+if (ParticipantID) {
+  document.getElementById("participantInfo").style.display = "block";
+}
+
+document.getElementById("submitBtn").addEventListener("click", () => {
+  if (Object.keys(responses).length < questions.length) {
+    alert("Please answer all items before submitting.");
+    return;
+  }
+
+  // === Capture optional participant info ===
+  let participantData = {};
+  if (ParticipantID) {
+    participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+    participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+  }
+
+  if (ParticipantID && (participantData.id === "anon" || participantData.condition === "none")) {
+    alert("Please enter both Participant ID and Condition ID.");
+    return;
+  } 
+
+  const scored = [];
+  const levelScores = { Perception: [], Comprehension: [], Projection: [], Overall: [] };
+
+  questions.forEach((q, i) => {
+    let val = responses[i];
+    if (q.reverse) val = 8 - val;
+    scored.push(val);
+    levelScores[q.level].push(val);
+  });
+
+  // Compute subscale means
+  const perceptionMean = mean(levelScores.Perception);
+  const comprehensionMean = mean(levelScores.Comprehension);
+  const projectionMean = mean(levelScores.Projection);
+  const overallMean = mean(levelScores.Overall);
+  const globalSA = mean([perceptionMean, comprehensionMean, projectionMean]);
+
+  // Show results
+  document.getElementById("part1").classList.add("hidden");
+  const resultsSection = document.getElementById("results");
+  resultsSection.classList.remove("hidden");
+
+  if(!fileDownload) {
+    document.getElementById("resultsContent").innerHTML = `
+    <table class="results">
+      <tr><th>Dimension</th><th>Mean Score (1–7)</th></tr>
+      <tr><td>Level 1 – Perception</td><td>${perceptionMean.toFixed(2)}</td></tr>
+      <tr><td>Level 2 – Comprehension</td><td>${comprehensionMean.toFixed(2)}</td></tr>
+      <tr><td>Level 3 – Projection</td><td>${projectionMean.toFixed(2)}</td></tr>
+      <tr><td>Overall SA rating</td><td>${overallMean.toFixed(2)}</td></tr>
+      <tr><th>Composite SA Index</th><th>${globalSA.toFixed(2)}</th></tr>
+    </table>
+  `;
+  }
+  else
+    document.getElementById("results").outerText = "Thank you!";
+
+  // Post structured results for integration
+  const resultObj = {
+    success: true,
+    scales: [
+      { name: "Perception", mean: perceptionMean },
+      { name: "Comprehension", mean: comprehensionMean },
+      { name: "Projection", mean: projectionMean },
+      { name: "Overall", mean: overallMean }
+    ],
+    compositeSA: globalSA,
+    rawResponses: questions.map((q, i) => ({
+      item: q.text,
+      level: q.level,
+      reverse: !!q.reverse,
+      response: responses[i],
+      scored: scored[i]
+    }))
+  };
+  window.top.postMessage({ success: true, participantData, resultObj }, "*");
+
+  if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
+});
+
+function mean(arr) {
+  return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+}
+
+// === Optional local JSON file download ===
+function downloadResultsJSON(results) {
+  const pid = results.participantData?.id || "anon";
+  const cond = results.participantData?.condition || "none";
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `SA_${pid}_${cond}_${timestamp}.json`;
+  const json = JSON.stringify(results, null, 2);
+
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
+</script>
+</body>
+</html>

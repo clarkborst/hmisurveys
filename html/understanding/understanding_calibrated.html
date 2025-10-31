@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Understanding & Metacognitive Confidence Survey</title>
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 20px;
+  line-height: 1.5;
+}
+h2 { margin-top: 0; }
+p { max-width: 750px; }
+
+table.questions {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1em;
+}
+table.questions th, table.questions td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+table.questions th {
+  background-color: #f0f0f0;
+}
+.question-text {
+  width: 45%;
+}
+.answer-cell {
+  width: 30%;
+}
+.confidence-cell {
+  text-align: center;
+  width: 25%;
+}
+input[type=range] {
+  width: 90%;
+}
+.next {
+  margin-top: 20px;
+  font-size: 14px;
+  padding: 8px 16px;
+}
+.hidden { display: none; }
+.results {
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+.results th, .results td {
+  border: 1px solid #ccc;
+  padding: 5px 8px;
+}
+.confidence-cell .slider-row { display: flex; align-items: center; gap: 8px; }
+.confidence-cell input[type="range"] { flex: 1; min-width: 160px; }
+</style>
+</head>
+<body>
+
+<section id="part1">
+  <h2>System Understanding and Confidence Survey</h2>
+  <p>
+    This survey measures your factual and conceptual understanding of how the system works,
+    along with your <strong>confidence</strong> in each answer.
+    Please answer every question and set your confidence level
+    (0 = “Not sure”, 10 = “Completely certain”).
+  </p>
+
+  <!-- Participant info fields (shown only if ParticipantID == true) -->
+  <div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+    <label for="pid"><strong>Participant ID:</strong></label>
+    <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+    <label for="cond"><strong>Condition ID:</strong></label>
+    <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+  </div>
+
+  <table class="questions" id="questionTable">
+    <thead>
+      <tr>
+        <th>Question</th>
+        <th>Your Answer</th>
+        <th>Confidence (0–10)</th>
+      </tr>
+    </thead>
+    <tbody id="questionBody"></tbody>
+  </table>
+
+  <button class="next" id="submitBtn">Submit</button>
+</section>
+
+<section id="results" class="hidden">
+  <h2>Results</h2>
+  <div id="resultsContent"></div>
+</section>
+
+<script>
+
+// ===============================================================
+// === CONFIGURATION =============================================
+// ===============================================================
+
+// === Global options ===
+const fileDownload = false;       // Set to true to auto-download JSON
+const ParticipantID = false;      // Set to true to show Participant/Condition fields
+
+
+// === Configurable Questions ===
+const questions = [
+  {
+    text: "The system uses a distance threshold of 5 nautical miles to predict conflicts.",
+    type: "factual",
+    correct: true
+  },
+  {
+    text: "The system’s conflict-detection logic depends primarily on:",
+    type: "conceptual",
+    options: ["Vertical separation", "Time-to-conflict", "Aircraft type", "Random selection"],
+    correctIndex: 1
+  },
+  {
+    text: "The system updates its predictions in real-time when new radar data arrives.",
+    type: "factual",
+    correct: true
+  },
+  {
+    text: "Which factor most increases the system’s uncertainty in conflict prediction?",
+    type: "conceptual",
+    options: ["Data latency", "Aircraft speed", "Weather", "Aircraft type"],
+    correctIndex: 0
+  }
+];
+
+const responses = {};
+const confidences = {};
+const tbody = document.getElementById("questionBody");
+
+// === Render Questions ===
+questions.forEach((q, i) => {
+  const tr = document.createElement("tr");
+
+  // Question text
+  const tdText = document.createElement("td");
+  tdText.className = "question-text";
+  tdText.textContent = q.text;
+  tr.appendChild(tdText);
+
+  // Answer cell
+  const tdAnswer = document.createElement("td");
+  tdAnswer.className = "answer-cell";
+
+  if (q.type === "factual") {
+    // --- True/False radio buttons ---
+    const trueLabel = document.createElement("label");
+    const trueInput = document.createElement("input");
+    trueInput.type = "radio";
+    trueInput.name = "q" + i;
+    trueInput.value = "true";
+    trueInput.addEventListener("change", e => responses[i] = e.target.value === "true");
+    trueLabel.appendChild(trueInput);
+    trueLabel.append(" True ");
+
+    const falseLabel = document.createElement("label");
+    const falseInput = document.createElement("input");
+    falseInput.type = "radio";
+    falseInput.name = "q" + i;
+    falseInput.value = "false";
+    falseInput.addEventListener("change", e => responses[i] = e.target.value === "true");
+    falseLabel.appendChild(falseInput);
+    falseLabel.append(" False");
+
+    tdAnswer.appendChild(trueLabel);
+    tdAnswer.appendChild(falseLabel);
+
+  } else if (q.type === "conceptual") {
+    // --- Dropdown menu for conceptual items ---
+    const select = document.createElement("select");
+    select.innerHTML = `<option value="">Select</option>` +
+      q.options.map((opt, j) => `<option value="${j}">${opt}</option>`).join("");
+    select.addEventListener("change", e => responses[i] = parseInt(e.target.value));
+    tdAnswer.appendChild(select);
+  }
+
+  tr.appendChild(tdAnswer);
+
+  // Confidence slider with Low–High labels (robust)
+  const tdConf = document.createElement("td");
+  tdConf.className = "confidence-cell";
+
+  const row = document.createElement("div");
+  row.className = "slider-row";
+
+  const lowLabel = document.createElement("span");
+  lowLabel.textContent = "Low";
+  lowLabel.style.fontSize = "12px";
+
+  const highLabel = document.createElement("span");
+  highLabel.textContent = "High";
+  highLabel.style.fontSize = "12px";
+
+  const slider = document.createElement("input");
+  slider.type = "range";
+  slider.min = 0; slider.max = 10; slider.step = 1;
+  slider.value = 0;
+
+  const valueLabel = document.createElement("span");
+  valueLabel.textContent = "0";
+  valueLabel.style.marginLeft = "6px";
+  valueLabel.style.fontWeight = "bold";
+
+  slider.addEventListener("input", e => {
+    const v = parseInt(e.target.value, 10);
+    confidences[i] = v;
+    valueLabel.textContent = String(v);
+  });
+
+  row.appendChild(lowLabel);
+  row.appendChild(slider);
+  row.appendChild(highLabel);
+
+  tdConf.appendChild(row);
+  //tdConf.appendChild(document.createElement("br"));
+  tdConf.appendChild(valueLabel);
+
+  tr.appendChild(tdConf);
+
+  tbody.appendChild(tr);
+});
+
+// === Capture optional participant info ===
+let participantData = {};
+
+
+// === Show participant fields if enabled ===
+if (ParticipantID) {
+  document.getElementById("participantInfo").style.display = "block";
+}
+
+// === Compute Results ===
+document.getElementById("submitBtn").addEventListener("click", () => {
+  if (Object.keys(responses).length < questions.length) {
+    alert("Please answer all questions before submitting.");
+    return;
+  }
+
+  // === Capture optional participant info ===
+  let participantData = {};
+  if (ParticipantID) {
+    participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+    participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+  }
+
+  if (ParticipantID && (participantData.id === "anon" || participantData.condition === "none")) {
+    alert("Please enter both Participant ID and Condition ID.");
+    return;
+  } 
+
+  const scored = [];
+  const confVals = [];
+  questions.forEach((q, i) => {
+    let correct = false;
+    if (q.type === "factual") correct = responses[i] === q.correct;
+    else if (q.type === "conceptual") correct = responses[i] === q.correctIndex;
+    scored.push(correct ? 1 : 0);
+    confVals.push(confidences[i] ?? 0);
+  });
+
+  const factualScore = mean(scored.filter((_, i) => questions[i].type === "factual")) * 100;
+  const conceptualScore = mean(scored.filter((_, i) => questions[i].type === "conceptual")) * 100;
+  const meanConfidence = mean(confVals);
+  const calibrationIndex = mean(scored.map((s, i) => s * 10 - (confidences[i] ?? 0)));
+
+  document.getElementById("part1").classList.add("hidden");
+  const resultsSection = document.getElementById("results");
+  resultsSection.classList.remove("hidden");
+
+  if(!fileDownload) {
+    document.getElementById("resultsContent").innerHTML = `
+    <table class="results">
+      <tr><th>Measure</th><th>Score</th></tr>
+      <tr><td>Factual Accuracy</td><td>${factualScore.toFixed(1)}%</td></tr>
+      <tr><td>Conceptual Accuracy</td><td>${conceptualScore.toFixed(1)}%</td></tr>
+      <tr><td>Mean Confidence</td><td>${meanConfidence.toFixed(1)} / 10</td></tr>
+      <tr><td>Calibration Index (closer to zero = better)</td><td>${calibrationIndex.toFixed(2)}</td></tr>
+    </table>
+  `;
+  }
+  else
+    document.getElementById("results").outerText = "Thank you!";
+
+  // Send structured results
+  const resultObj = {
+    success: true,
+    factualAccuracy: factualScore,
+    conceptualAccuracy: conceptualScore,
+    meanConfidence,
+    calibrationIndex,
+    items: questions.map((q, i) => ({
+      text: q.text,
+      type: q.type,
+      correct: q.type === "factual" ? q.correct : q.options[q.correctIndex],
+      response: responses[i],
+      confidence: confidences[i] ?? 0,
+      isCorrect: scored[i] === 1
+    }))
+  };
+  window.top.postMessage({ success: true, participantData, resultObj }, "*");
+
+  if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
+});
+
+function mean(arr) {
+  const valid = arr.filter(v => typeof v === "number" && !isNaN(v));
+  return valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : 0;
+}
+
+// === Optional local JSON file download ===
+function downloadResultsJSON(results) {
+  const pid = results.participantData?.id || "anon";
+  const cond = results.participantData?.condition || "none";
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `understanding_calibrated_${pid}_${cond}_${timestamp}.json`;
+  const json = JSON.stringify(results, null, 2);
+
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Human–Autonomy Teaming (HAT) survey</title>
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 20px;
+  line-height: 1.5;
+}
+h2 { margin-top: 0; }
+p { max-width: 700px; }
+
+h3 {
+  background-color: #f0f0f0;
+  padding: 8px;
+  border-left: 5px solid #0077cc;
+  font-size: 16px;
+}
+
+table.category {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 2em;
+}
+table.category th, table.category td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: center;
+  font-size: 14px;
+}
+table.category th:first-child, table.category td:first-child {
+  text-align: left;
+  width: 55%;
+}
+.next {
+  margin-top: 20px;
+  font-size: 14px;
+  padding: 8px 16px;
+}
+.hidden { display: none; }
+.results {
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+.results th, .results td {
+  border: 1px solid #ccc;
+  padding: 5px 8px;
+}
+</style>
+</head>
+<body>
+
+<section id="part1">
+  <h2>Human–Autonomy Teaming (HAT) survey</h2>
+  <p>
+    Please rate each statement according to your experience working with the system.
+    Use a 7-point scale (1 = Strongly Disagree, 7 = Strongly Agree).
+  </p>
+
+  <!-- Participant info fields (shown only if ParticipantID == true) -->
+  <div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+    <label for="pid"><strong>Participant ID:</strong></label>
+    <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+    <label for="cond"><strong>Condition ID:</strong></label>
+    <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+  </div>
+
+  <!-- Shared Goals -->
+  <h3>Shared Goals & Alignment</h3>
+  <table class="category" id="goalsTable">
+    <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Strongly<br>Disagree</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Strongly<br>Agree</th>
+        </tr>
+      </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Communication -->
+  <h3>Communication & Coordination</h3>
+  <table class="category" id="communicationTable">
+    <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Strongly<br>Disagree</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Strongly<br>Agree</th>
+        </tr>
+      </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Trust -->
+  <h3>Mutual Trust & Dependability</h3>
+  <table class="category" id="trustTable">
+    <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Strongly<br>Disagree</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Strongly<br>Agree</th>
+        </tr>
+      </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Role Clarity -->
+  <h3>Complementarity & Role Clarity</h3>
+  <table class="category" id="rolesTable">
+    <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Strongly<br>Disagree</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Strongly<br>Agree</th>
+        </tr>
+      </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Situation Awareness -->
+  <h3>Shared Situation Awareness</h3>
+  <table class="category" id="saTable">
+    <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Strongly<br>Disagree</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Strongly<br>Agree</th>
+        </tr>
+      </thead>
+    <tbody></tbody>
+  </table>
+
+  <button class="next" id="submitBtn">Submit</button>
+</section>
+
+<section id="results" class="hidden">
+  <h2>Results</h2>
+  <div id="resultsContent"></div>
+</section>
+
+<script>
+
+// ===============================================================
+// === CONFIGURATION =============================================
+// ===============================================================
+
+// === Global options ===
+const fileDownload = true;       // Set to true to auto-download JSON
+const ParticipantID = false;      // Set to true to show Participant/Condition fields
+
+// === Human–AI Teaming Items ===
+const questions = [
+  // Shared Goals
+  { text: "The automated system and I were working toward the same objectives.", category: "Goals" },
+  { text: "The automation's actions supported my overall mission goals.", category: "Goals" },
+  { text: "There were conflicts between my goals and the automation’s goals.", category: "Goals", reverse: true },
+
+  // Communication
+  { text: "The automation communicated its intentions clearly.", category: "Communication" },
+  { text: "I was able to anticipate the automation’s actions.", category: "Communication" },
+  { text: "The coordination between me and the automation was effective.", category: "Communication" },
+
+  // Trust
+  { text: "I could rely on the automation to perform its assigned functions.", category: "Trust" },
+  { text: "The automation was dependable during the task.", category: "Trust" },
+  { text: "I had to double-check the automation’s output frequently.", category: "Trust", reverse: true },
+
+  // Roles
+  { text: "My role and the automation’s role were clearly defined.", category: "Roles" },
+  { text: "The automation complemented my skills and compensated for my weaknesses.", category: "Roles" },
+  { text: "The division of responsibilities between me and the automation was appropriate.", category: "Roles" },
+
+  // Situation Awareness
+  { text: "The automation helped me maintain awareness of the situation.", category: "SA" },
+  { text: "The automation was aware of relevant changes in the environment.", category: "SA" },
+  { text: "The automation’s recommendations improved my understanding of the overall situation.", category: "SA" }
+];
+
+const responses = {};
+function buildCategoryTable(category, containerId) {
+  const tbody = document.querySelector(`#${containerId} tbody`);
+  const categoryQuestions = questions.filter(q => q.category === category);
+  categoryQuestions.forEach((q, i) => {
+    const index = questions.indexOf(q);
+    const tr = document.createElement("tr");
+    const tdLabel = document.createElement("td");
+    tdLabel.textContent = q.text;
+    tr.appendChild(tdLabel);
+    for (let v = 1; v <= 7; v++) {
+      const td = document.createElement("td");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "q" + index;
+      radio.value = v;
+      radio.addEventListener("change", () => { responses[index] = parseInt(v); });
+      td.appendChild(radio);
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+// Build grouped tables
+buildCategoryTable("Goals", "goalsTable");
+buildCategoryTable("Communication", "communicationTable");
+buildCategoryTable("Trust", "trustTable");
+buildCategoryTable("Roles", "rolesTable");
+buildCategoryTable("SA", "saTable");
+
+// === Capture optional participant info ===
+let participantData = {};
+
+
+// === Show participant fields if enabled ===
+if (ParticipantID) {
+  document.getElementById("participantInfo").style.display = "block";
+}
+
+document.getElementById("submitBtn").addEventListener("click", () => {
+  if (Object.keys(responses).length < questions.length) {
+    alert("Please answer all items before submitting.");
+    return;
+  }
+
+  // === Capture optional participant info ===
+  let participantData = {};
+  if (ParticipantID) {
+    participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+    participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+  }
+
+  if (ParticipantID && (participantData.id === "anon" || participantData.condition === "none")) {
+    alert("Please enter both Participant ID and Condition ID.");
+    return;
+  } 
+
+  const categories = ["Goals", "Communication", "Trust", "Roles", "SA"];
+  const categoryScores = {};
+  categories.forEach(cat => categoryScores[cat] = []);
+
+  questions.forEach((q, i) => {
+    let val = responses[i];
+    if (q.reverse) val = 8 - val;
+    categoryScores[q.category].push(val);
+  });
+
+  const means = {};
+  categories.forEach(cat => means[cat] = mean(categoryScores[cat]));
+  const teamEffectiveness = mean(Object.values(means));
+
+  document.getElementById("part1").classList.add("hidden");
+  const resultsSection = document.getElementById("results");
+  resultsSection.classList.remove("hidden");
+
+  if(!fileDownload) {
+    document.getElementById("resultsContent").innerHTML = `
+    <table class="results">
+      <tr><th>Dimension</th><th>Mean (1–7)</th></tr>
+      <tr><td>Shared Goals & Alignment</td><td>${means.Goals.toFixed(2)}</td></tr>
+      <tr><td>Communication & Coordination</td><td>${means.Communication.toFixed(2)}</td></tr>
+      <tr><td>Mutual Trust & Dependability</td><td>${means.Trust.toFixed(2)}</td></tr>
+      <tr><td>Complementarity & Role Clarity</td><td>${means.Roles.toFixed(2)}</td></tr>
+      <tr><td>Shared Situation Awareness</td><td>${means.SA.toFixed(2)}</td></tr>
+      <tr><th>Overall Team Effectiveness Index</th><th>${teamEffectiveness.toFixed(2)}</th></tr>
+    </table>
+  `;
+  }
+  else
+    document.getElementById("results").outerText = "Thank you!";
+
+  const resultObj = {
+    success: true,
+    scales: categories.map(cat => ({ name: cat, mean: means[cat] })),
+    teamEffectiveness,
+    rawResponses: questions.map((q, i) => ({
+      item: q.text,
+      category: q.category,
+      reverse: !!q.reverse,
+      response: responses[i],
+      scored: q.reverse ? 8 - responses[i] : responses[i]
+    }))
+  };
+  window.top.postMessage({ success: true, participantData, resultObj }, "*");
+
+  if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
+});
+
+function mean(arr) {
+  return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+}
+
+// === Optional local JSON file download ===
+function downloadResultsJSON(results) {
+  const pid = results.participantData?.id || "anon";
+  const cond = results.participantData?.condition || "none";
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `hat_${pid}_${cond}_${timestamp}.json`;
+  const json = JSON.stringify(results, null, 2);
+
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

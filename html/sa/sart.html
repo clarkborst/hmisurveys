@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Situation Awareness Rating Technique (SART)</title>
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 20px;
+  line-height: 1.5;
+}
+h2 { margin-top: 0; }
+p { max-width: 700px; }
+
+table.category {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 2em;
+}
+table.category th, table.category td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: center;
+  font-size: 14px;
+}
+table.category th:first-child, table.category td:first-child {
+  text-align: left;
+  width: 55%;
+}
+
+h3 {
+  background-color: #f0f0f0;
+  padding: 8px;
+  border-left: 5px solid #0077cc;
+  font-size: 16px;
+}
+
+.next {
+  margin-top: 20px;
+  font-size: 14px;
+  padding: 8px 16px;
+}
+
+.hidden { display: none; }
+
+.results {
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+.results th, .results td {
+  border: 1px solid #ccc;
+  padding: 5px 8px;
+}
+</style>
+</head>
+<body>
+
+<section id="part1">
+  <h2>Situation Awareness Rating Technique (SART)</h2>
+  <p>
+    Please rate each statement according to your experience during the task.  
+    Use a 7-point scale (1 = Very Low, 7 = Very High).
+  </p>
+
+    <!-- Participant info fields (shown only if ParticipantID == true) -->
+    <div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+      <label for="pid"><strong>Participant ID:</strong></label>
+      <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+      <label for="cond"><strong>Condition ID:</strong></label>
+      <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+    </div>
+
+  <!-- Demand -->
+  <h3>Demand on Attentional Resources</h3>
+  <table class="category" id="demandTable">
+    <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Very<br>Low</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Very<br>High</th>
+        </tr>
+      </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Supply -->
+  <h3>Supply of Attentional Resources</h3>
+  <table class="category" id="supplyTable">
+    <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Very<br>Low</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Very<br>High</th>
+        </tr>
+      </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Understanding -->
+  <h3>Understanding of the Situation</h3>
+  <table class="category" id="understandingTable">
+    <thead>
+        <tr>
+          <th>Statement</th>
+          <th>1<br>Very<br>Low</th>
+          <th>2</th><th>3</th>
+          <th>4<br>Neutral</th>
+          <th>5</th><th>6</th>
+          <th>7<br>Very<br>High</th>
+        </tr>
+      </thead>
+    <tbody></tbody>
+  </table>
+
+  <button class="next" id="submitBtn">Submit</button>
+</section>
+
+<section id="results" class="hidden">
+  <h2>Results</h2>
+  <div id="resultsContent"></div>
+</section>
+
+<script>
+
+// ===============================================================
+// === CONFIGURATION =============================================
+// ===============================================================
+
+// === Global options ===
+const fileDownload = false;       // Set to true to auto-download JSON
+const ParticipantID = false;      // Set to true to show Participant/Condition fields
+
+
+const questions = [
+  // --- DEMAND (on attentional resources) ---
+  { text: "Instability of the situation – How changeable or unstable was the environment?", category: "Demand" },
+  { text: "Complexity of the situation – How complicated or confusing was the situation?", category: "Demand" },
+  { text: "Variability of the situation – How much did elements or events vary over time?", category: "Demand" },
+
+  // --- SUPPLY (of attentional resources) ---
+  { text: "Arousal – How alert and reactive were you to changes or events?", category: "Supply" },
+  { text: "Concentration of attention – How focused were you on relevant information?", category: "Supply" },
+  { text: "Spare mental capacity – How much mental capacity did you have to spare?", category: "Supply" },
+  { text: "Division of attention – How well could you divide your attention between multiple tasks or elements?", category: "Supply" },
+
+  // --- UNDERSTANDING (of the situation) ---
+  { text: "Quantity of information – How much information did you have about the situation?", category: "Understanding" },
+  { text: "Quality of information – How accurate, relevant, and reliable was that information?", category: "Understanding" },
+  { text: "Familiarity – How familiar were you with the situation or similar situations?", category: "Understanding" }
+];
+
+// === Build tables grouped by category ===
+const responses = {};
+function buildCategoryTable(category, containerId) {
+  const tbody = document.querySelector(`#${containerId} tbody`);
+  const categoryQuestions = questions.filter(q => q.category === category);
+  categoryQuestions.forEach((q, i) => {
+    const index = questions.indexOf(q);
+    const tr = document.createElement("tr");
+    const tdLabel = document.createElement("td");
+    tdLabel.textContent = q.text;
+    tr.appendChild(tdLabel);
+    for (let v = 1; v <= 7; v++) {
+      const td = document.createElement("td");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "q" + index;
+      radio.value = v;
+      radio.addEventListener("change", () => { responses[index] = parseInt(v); });
+      td.appendChild(radio);
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+["Demand", "Supply", "Understanding"].forEach(cat => {
+  const tableId = cat.toLowerCase() + "Table";
+  buildCategoryTable(cat, tableId);
+});
+
+// === Capture optional participant info ===
+let participantData = {};
+
+
+// === Show participant fields if enabled ===
+if (ParticipantID) {
+  document.getElementById("participantInfo").style.display = "block";
+}
+
+// === Compute Results ===
+document.getElementById("submitBtn").addEventListener("click", () => {
+  if (Object.keys(responses).length < questions.length) {
+    alert("Please answer all items before submitting.");
+    return;
+  }
+
+    // === Capture optional participant info ===
+  let participantData = {};
+  if (ParticipantID) {
+    participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+    participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+  }
+
+  if (ParticipantID && (participantData.id === "anon" || participantData.condition === "none")) {
+    alert("Please enter both Participant ID and Condition ID.");
+    return;
+  } 
+
+  const categoryScores = { Demand: [], Supply: [], Understanding: [] };
+  questions.forEach((q, i) => categoryScores[q.category].push(responses[i]));
+
+  const demandMean = mean(categoryScores.Demand);
+  const supplyMean = mean(categoryScores.Supply);
+  const understandingMean = mean(categoryScores.Understanding);
+
+  const compositeSA = (supplyMean + understandingMean) - demandMean;
+
+  // Display Results
+  document.getElementById("part1").classList.add("hidden");
+  const resultsSection = document.getElementById("results");
+  resultsSection.classList.remove("hidden");
+
+  if(!fileDownload) {
+    document.getElementById("resultsContent").innerHTML = `
+    <table class="results">
+      <tr><th>Category</th><th>Mean (1–7)</th></tr>
+      <tr><td>Demand on Attentional Resources</td><td>${demandMean.toFixed(2)}</td></tr>
+      <tr><td>Supply of Attentional Resources</td><td>${supplyMean.toFixed(2)}</td></tr>
+      <tr><td>Understanding of the Situation</td><td>${understandingMean.toFixed(2)}</td></tr>
+      <tr><th>Composite SART Score</th><th>${compositeSA.toFixed(2)}</th></tr>
+    </table>
+  `;
+  }
+  else
+    document.getElementById("results").outerText = "Thank you!";
+
+  // Send results
+  const resultObj = {
+    success: true,
+    scales: [
+      { name: "Demand", mean: demandMean },
+      { name: "Supply", mean: supplyMean },
+      { name: "Understanding", mean: understandingMean }
+    ],
+    compositeSA,
+    rawResponses: questions.map((q, i) => ({
+      item: q.text,
+      category: q.category,
+      response: responses[i]
+    }))
+  };
+
+  window.top.postMessage({ success: true, participantData, resultObj }, "*");
+
+  if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
+
+});
+
+function mean(arr) {
+  return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+}
+
+// === Optional local JSON file download ===
+function downloadResultsJSON(results) {
+  const pid = results.participantData?.id || "anon";
+  const cond = results.participantData?.condition || "none";
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = `sart_${pid}_${cond}_${timestamp}.json`;
+  const json = JSON.stringify(results, null, 2);
+
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
