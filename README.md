@@ -86,7 +86,7 @@ If you use or adapt this survey framework in your research, please cite it as fo
 
 #### APA format
 > Borst, C. (2025). *Modular Open-Source Survey Framework for Human–Machine Interaction Research.*  
-> Delft University of Technology. DOI: [https://doi.org/10.5281/zenodo.17495929](https://doi.org/10.5281/zenodo.17495929). Available at: [https://github.com/clarkborst/hmisurveys](https://github.com/clarkborst/hmisurveys)
+> Delft University of Technology. DOI: [https://doi.org/10.5281/zenodo.17495929](https://doi.org/10.5281/zenodo.17495928). Available at: [https://github.com/clarkborst/hmisurveys](https://github.com/clarkborst/hmisurveys)
 
 #### BibTeX
 ```bibtex
@@ -95,7 +95,7 @@ If you use or adapt this survey framework in your research, please cite it as fo
   title        = {Modular Open-Source Survey Framework for Human–Machine Interaction Research},
   year         = {2025},
   publisher    = {{D}elft {U}niversity of {T}echnology},
-  doi          = {https://doi.org/10.5281/zenodo.17495929},
+  doi          = {https://doi.org/10.5281/zenodo.17495928},
   howpublished = {\url{https://github.com/clarkborst/hmisurveys}},
   url          = {\url{https://github.com/clarkborst/hmisurveys}},
   note         = {GPL-3 license.}
@@ -641,3 +641,4 @@ Research and Innovation (SERI). Views and opinions expressed are however those
 of the author(s) only and do not necessarily reflect those of the European Union and SERI.
 
 Neither the European Union nor the granting authority can be held responsible for them.
+
