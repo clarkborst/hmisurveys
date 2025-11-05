@@ -24,6 +24,9 @@ All surveys send structured JSON results to the host via `window.postMessage()` 
 Alternatively, the survey can also be used standalone and automatically download a JSON 
 file (see instructions in the section *Integration with Applications*).
 
+Finally, all individual surveys can also be **chained together** into a single HTML orchestrator. See *Survey Chainer* section
+at the end of this README.
+
 ---
 
 ### Key benefits over cloud-based platforms
@@ -42,6 +45,7 @@ provides comparable flexibility and user experience, but with **full researcher 
 - Open a survey HTML file in your favourite editor (e.g., VSCode) and add your survey questions. 
 - Researchers can easily add new question types (e.g., Likert, sliders, dropdowns, open text, or matrix tables).
 - Each survey (e.g., **NASA-TLX**, **Trust**, **Understanding**, **SART**, etc.) is a **self-contained HTML module** that can be embedded using an `<iframe>` or imported into larger experimental interfaces.
+- Chain surveys together into a single orchestrator
 
 #### 💻 3. Full Offline Capability
 - Surveys can run entirely **offline**, directly from a local file or USB drive.
@@ -86,7 +90,7 @@ If you use or adapt this survey framework in your research, please cite it as fo
 
 #### APA format
 > Borst, C. (2025). *Modular Open-Source Survey Framework for Human–Machine Interaction Research.*  
-> Delft University of Technology. DOI: [https://doi.org/10.5281/zenodo.17495928](https://doi.org/10.5281/zenodo.17495928). Available at: [https://github.com/clarkborst/hmisurveys](https://github.com/clarkborst/hmisurveys)
+> Delft University of Technology. DOI: https://doi.org/10.5281/zenodo.17495928. Available at: [https://github.com/clarkborst/hmisurveys](https://github.com/clarkborst/hmisurveys)
 
 #### BibTeX
 ```bibtex
@@ -95,7 +99,7 @@ If you use or adapt this survey framework in your research, please cite it as fo
   title        = {Modular Open-Source Survey Framework for Human–Machine Interaction Research},
   year         = {2025},
   publisher    = {{D}elft {U}niversity of {T}echnology},
-  doi          = {https://doi.org/10.5281/zenodo.17495928},
+  doi          = {10.5281/zenodo.17495928},
   howpublished = {\url{https://github.com/clarkborst/hmisurveys}},
   url          = {\url{https://github.com/clarkborst/hmisurveys}},
   note         = {GPL-3 license.}
@@ -247,7 +251,7 @@ Based on **Taylor (1989, 1990)** and **Endsley (1995)**.
 
 ---
 
-### ⚙️ 4. Technology Acceptance (TAM / TAM2)
+### ⚙️ 4a. Acceptance: Technology Acceptance (TAM / TAM2)
 **Purpose:** Measures **user acceptance** and **perceived usefulness/ease of use** of automated systems.
 
 **Scientific Basis:**
@@ -255,6 +259,42 @@ Based on **Taylor (1989, 1990)** and **Endsley (1995)**.
 - Venkatesh, V., & Davis, F. D. (2000). *A theoretical extension of the technology acceptance model: TAM2.*, Management Science, 46 (2), 186–204.
 
 **Output:** Composite acceptance (experimental!) score and subscale means (Usefulness, Ease of Use, Intention to Use).
+
+---
+
+### ⚙️ 4b. Acceptance: Van der Laan
+**Purpose:**   
+The Van der Laan acceptance ccale is a concise and widely used questionnaire for assessing user acceptance of (automated or intelligent) systems.
+It evaluates how useful, satisfying, and overall acceptable a system is perceived to be, using a set of nine bipolar adjective pairs rated on 
+a 5-point semantic differential scale from −2 (very negative) to +2 (very positive).
+
+**Scientific Basis:**
+- Van der Laan, J.D., Heino, A., & De Waard, D. (1997). *A simple procedure for the assessment of acceptance of advanced transport telematics*. Transportation Research - Part C: Emerging Technologies, 5, 1-10.
+
+**Explanation:**   
+
+Each item is scored from −2 to +2, where higher values indicate greater acceptance.
+Items with the positive adjective on the left (e.g., “Useful – Useless”) are automatically reverse-coded so that all subscale scores are directionally aligned.
+
+| Dimension        | Description                                                                                              | Items                                                                                                    |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |-----------------------------------------------------------------------------------------------------------------|
+| **Usefulness**   | Measures the perceived contribution of the system to task performance and goal achievement.              | Useful – Useless, Bad – Good, Effective – Superfluous, Assisting – Worthless, Raising alertness – Sleep-inducing |
+| **Satisfaction** | Captures the affective, hedonic response — how pleasant, likeable, or desirable the system feels to use. | Pleasant – Unpleasant, Nice – Annoying, Irritating – Likeable, Undesirable – Desirable                          |
+
+
+**Output:**   
+- Raw response and corrected scores
+- Usefulness 
+- Satisfaction 
+- Overall Acceptance (mean of all 9 items)
+
+**Tip:**   
+
+A nice way to portray Van der Laan results is by using a scatter plot as suggested in the original article:
+
+<img src="./img_2.png" width="400">
+
+**IMPORTANT:** This survey should not be modified to maintain scientific validity.
 
 ---
 
@@ -461,6 +501,75 @@ corresponding to a particular deficiency in operator support.
 
 ---
 
+### 💻 8. User Experience Questionnaire (UEQ)
+
+**Purpose:**   
+Measure **subjective user experience** across key UX dimensions such as efficiency, clarity, stimulation, and novelty.
+Both the original **User Experience Questionnaire (UEQ)** and its **short version (UEQ-S)** are available.
+
+| Version | # Items | Typical Duration | Dimensions Covered |
+|----------|----------|------------------|--------------------|
+| **UEQ (Full)** | 26 | ~5–7 min | Attractiveness, Perspicuity, Efficiency, Dependability, Stimulation, Novelty |
+| **UEQ-S (Short)** | 8 | ~2–3 min | Efficiency, Perspicuity, Stimulation, Novelty |
+
+Both versions use **bipolar adjective pairs** on a **7-point semantic differential scale**, e.g.:
+
+> “complicated – easy”, “boring – exciting”, “obstructive – supportive”
+
+Participants rate each item from **1 (very negative)** to **7 (very positive)**, depending on the polarity of
+the item. For example, some items have reversed polarity from **1 (very positive)** to **7 (very negative)**, requiring
+a reverse scoring correction to bring them on the same scale:
+
+`Reversed Score = 8 − Original Score`
+
+So, if a participant gives a “2” on a reversed item (low rating), it becomes a “6” in the scoring.
+
+Dimension means and an overall UEQ index are computed automatically.
+
+**📚 Scientific Foundations**   
+
+- Laugwitz, B., Held, T., & Schrepp, M. (2008). Construction and Evaluation of a User Experience Questionnaire. In A. Holzinger (Ed.), HCI and Usability for Education and Work (pp. 63–76). Springer.
+DOI: 10.1007/978-3-540-89350-9_6
+- Schrepp, M., Hinderks, A., & Thomaschewski, J. (2017). Design and Evaluation of a Short Version of the User Experience Questionnaire (UEQ-S). International Journal of Interactive Multimedia and Artificial Intelligence, 4(6), 103–108. https://doi.org/10.9781/IJIMAI.2017.09.001
+
+**Output:**
+
+| Dimension               | Mean (1–7) |
+| ----------------------- | ---------- |
+| Efficiency              | 5.83       |
+| Perspicuity             | 6.12       |
+| Stimulation             | 5.75       |
+| Novelty                 | 5.45       |
+| **Overall UEQ-S Index** | **5.79**   |
+
+The short version covers the same six dimensions but groups them into **two high-level factors**:
+
+| UEQ-S Factors         | Derived from full UEQ scales           |
+|-----------------------| -------------------------------------- |
+| **Pragmatic Quality** | Perspicuity, Efficiency, Dependability |
+| **Hedonic Quality**   | Stimulation, Novelty                   |
+| **Attractiveness**    | (Overall appeal across all items)      |
+
+Explanation:
+
+| Concept               | Description                                                                                                                                                                                                                     | Example Items (UEQ-S)                                                                                    |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Pragmatic Quality** | Refers to the *practical, goal-oriented* aspects of interaction — how effectively and efficiently users can achieve their objectives. It captures the system’s **usability**, **clarity**, and **dependability**.               | “obstructive – supportive”, “complicated – easy”, “inefficient – efficient”, “confusing – clear”         |
+| **Hedonic Quality**   | Refers to the *experiential, emotional, and motivational* aspects of interaction — how much the system is **engaging**, **innovative**, or **enjoyable** to use. It reflects the user’s intrinsic satisfaction and stimulation. | “boring – exciting”, “not interesting – interesting”, “conventional – inventive”, “usual – leading edge” |
+
+Both qualities are complementary:
+- **Pragmatic Quality** ensures the product is useful and usable. 
+- **Hedonic Quality** ensures the product is engaging and pleasurable.
+- An optimal user experience balances both — effective to use and enjoyable to interact with.
+
+In the validated UEQ-S layout, all right-hand adjectives represent the positive pole, so no reverse
+polarity correction is needed.
+
+
+**IMPORTANT:** This surveys should not be modified to maintain scientific validity.
+
+---
+
 
 ### 🧾 General Purpose Configurable Survey
 
@@ -488,7 +597,7 @@ subjective data collection.
 
 #### 🧰 Configuration Overview
 
-The survey is defined entirely by a single JavaScript object called `surveyConfig` at the top of the file.
+The survey is defined entirely by a single JavaScript object called `surveyConfig` at the top of the `<script>` section in the HTML.
 
 Example:
 
@@ -631,6 +740,85 @@ window.addEventListener("message", e => {
 ```
 ---
 
+## 🧩 Survey Chainer: Chaining Multiple Surveys with the Survey Orchestrator
+
+This repository supports running **multiple surveys** in sequence (e.g., UEQ, Van der Laan, Cooper–Harper, Understanding, etc.) using a 
+central HTML orchestrator. All results can be automatically collected and saved into a single JSON file — no backend or cloud service required.
+
+---
+
+### ⚙️ Step 1 – Configure the Chain
+
+Open `surveychainer.html` template in your favourite editor and modify the survey list at the start of the `<script>` section in the HTML:
+
+```js
+const surveys = [
+    { name: "System Understanding & Confidence", url: "./understanding/understanding.html" },
+    { name: "UEQ – User Experience Questionnaire", url: "./experience/ueq_short.html" },
+    { name: "Van der Laan Acceptance", url: "./acceptance/vanderlaan.html" },
+    { name: "Modified Cooper–Harper Workload", url: "./workload/mch.html" }
+    ];
+```
+You can **add**, **remove**, or **reorder** surveys simply by editing this array. Each entry should reference an existing HTML survey file in your project.
+
+---
+
+### ⚙️ Step 2 – Enable download
+
+In the `surveychainer.html`, above the `surveys` array, set the global behavior flags to enable file download and/or setting participant ID:
+
+```js
+    const fileDownload = false;       // Set to true to auto-download JSON
+    const ParticipantID = false;      // Set to true to show Participant/Condition fields
+```
+---
+
+### ⚙️ How It Works Internally
+
+Each survey runs inside an `<iframe>`. 
+
+When the participant submits:
+- The survey calls `window.top.postMessage(...)`. 
+- The orchestrator captures that data and moves to the next survey.
+
+When all surveys are complete, a single JSON file is downloaded:
+
+```pgsql
+  survey_session_P01_AutoL1_2025-11-05T10-30-00.json
+```
+
+The JSON file has the following data structure:
+
+```json
+{
+  "success": true,
+  "participantData": {
+    "id": "P01",
+    "condition": "AutoL1"
+  },
+  "allResults": {
+    "timestamp": "2025-11-05T14:03:06.951Z",
+    "surveys": [
+      { "surveyName": "UEQ", "timestamp": "2025-11-05T14:03:06.951Z", "payload": {...} },
+      { "surveyName": "Van der Laan Acceptance", "timestamp": "2025-11-05T14:03:06.951Z", "payload": {...} },
+      { "surveyName": "MCH Workload", "timestamp": "2025-11-05T14:03:06.951Z", "payload": {...} }
+    ]
+  }
+}
+```
+Here, `payload` contains the data collected from each individual survey.
+
+---
+
+### ✨ Key Advantages
+
+- 🧠 No backend required — all data stays local
+- 🔒 Privacy-safe: nothing leaves the user’s browser
+- 🧩 Modular: any survey can be swapped or added easily
+- 💾 Automatic aggregation of all survey data into one file
+
+---
+
 ### Acknowledgements
 
 Part of this work has been conducted within the AI4REALNET (AI for REAL-world 
@@ -638,7 +826,5 @@ NETwork operation) project (https://ai4realnet.eu/), which received funding from
 Union's Horizon Europe Research and Innovation programme under the Grant 
 Agreement No 101119527, and from the Swiss State Secretariat for Education, 
 Research and Innovation (SERI). Views and opinions expressed are however those 
-of the author(s) only and do not necessarily reflect those of the European Union and SERI.
-
-Neither the European Union nor the granting authority can be held responsible for them.
-
+of the author(s) only and do not necessarily reflect those of the European Union and SERI. Neither the European Union 
+nor the granting authority can be held responsible for them.
