@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Chain Orchestrator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f9f9f9;
+            text-align: center;
+        }
+        iframe {
+            width: 100%;
+            height: 80vh;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .hidden { display: none; }
+        .btn {
+            margin-top: 25px;
+            padding: 10px 20px;
+            border: none;
+            background: #007acc;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover { background: #005fa3; }
+        #progress { margin-bottom: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<section id="part1">
+    <h1>Survey Session</h1>
+    <p id="progress">Press Start button below</p>
+
+    <!-- Participant info fields (shown only if ParticipantID == true) -->
+    <div id="participantInfo" style="display:none; margin-bottom:20px; padding:10px; background:#eef; border-radius:6px;">
+        <label for="pid"><strong>Participant ID:</strong></label>
+        <input type="text" id="pid" placeholder="e.g. P001" style="margin-right:15px;">
+
+        <label for="cond"><strong>Condition ID:</strong></label>
+        <input type="text" id="cond" placeholder="e.g. C_AutoAI">
+    </div>
+
+    <iframe id="surveyFrame" src="" allow="clipboard-write"></iframe>
+
+    <button id="startBtn" class="btn">Start</button>
+    <button id="downloadBtn" class="btn hidden">Finish</button>
+</section>
+
+<section id="resultsSection" class="hidden">
+</section>
+
+<script>
+    // =============================================================
+    // === GLOBAL CONTROL BOOLEANS =================================
+    // =============================================================
+    const fileDownload = true;       // Set to true to auto-download JSON
+    const ParticipantID = true;      // Set to true to show Participant/Condition fields
+
+    // =============================================================
+    // === SURVEY CHAIN CONFIGURATION ===============================
+    // =============================================================
+    const surveys = [
+        { name: "System Understanding & Confidence", url: "./understanding/understanding.html" },
+        { name: "UEQ – User Experience Questionnaire", url: "./experience/ueq_short.html" },
+        { name: "Van der Laan Acceptance", url: "./acceptance/vanderlaan.html" },
+        { name: "Modified Cooper–Harper Workload", url: "./workload/mch.html" }
+    ];
+
+    // =============================================================
+    // === STATE ====================================================
+    let current = -1;
+
+    let participantData = { id: "anon", condition: "none" };
+
+    const allResults = {
+        timestamp: new Date().toISOString(),
+        surveys: []
+    };
+
+    const frame = document.getElementById("surveyFrame");
+    const progress = document.getElementById("progress");
+    const startBtn = document.getElementById("startBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    // =============================================================
+    // === MESSAGE HANDLER =========================================
+    window.addEventListener("message", (event) => {
+        if (!event.data || !event.data.success) return;
+
+        const surveyMeta = surveys[current];
+        console.log(`📩 Received data from: ${surveyMeta.name}`, event.data);
+
+        // Store current survey results
+        allResults.surveys.push({
+            surveyName: surveyMeta.name,
+            timestamp: new Date().toISOString(),
+            payload: event.data
+        });
+
+        // Proceed to next survey
+        if (current + 1 < surveys.length) {
+            current++;
+            loadSurvey();
+        } else {
+            finishSession();
+        }
+    });
+
+    // === Show participant fields if enabled ===
+    if (ParticipantID) {
+        document.getElementById("participantInfo").style.display = "block";
+    }
+
+    // =============================================================
+    // === SURVEY FLOW ==============================================
+    startBtn.addEventListener("click", () => {
+        startBtn.classList.add("hidden");
+        current = 0;
+        loadSurvey();
+    });
+
+    function loadSurvey() {
+        const survey = surveys[current];
+        progress.textContent = `Survey ${current + 1} of ${surveys.length}: ${survey.name}`;
+
+        // Build URL and enforce global overrides
+        const url = new URL(survey.url, window.location.href);
+        frame.src = url.href;
+    }
+
+    function finishSession() {
+
+        frame.classList.add("hidden");
+        progress.textContent = "✅ All surveys completed!";
+        downloadBtn.classList.remove("hidden");
+    }
+
+    downloadBtn.addEventListener("click", () => {
+
+        // === Capture optional participant info ===
+        if (ParticipantID) {
+            participantData.id = document.getElementById("pid")?.value.trim() || "anon";
+            participantData.condition = document.getElementById("cond")?.value.trim() || "none";
+        }
+
+        if (ParticipantID && (participantData.id === "anon" || participantData.condition === "none")) {
+            alert("Please enter both Participant ID and Condition ID.");
+            return;
+        }
+
+        window.top.postMessage({ success: true, participantData, allResults }, "*");
+
+        if (fileDownload) downloadResultsJSON({ success: true, participantData, allResults });
+
+        document.getElementById("part1").style.display = "none";
+        const resultsSection = document.getElementById("resultsSection");
+        resultsSection.style.display = "block";
+
+        document.getElementById("resultsSection").outerText = "Thank you!";
+
+    });
+
+    // === Optional local JSON file download ===
+    function downloadResultsJSON(results) {
+        const pid = results.participantData?.id || "anon";
+        const cond = results.participantData?.condition || "none";
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        const filename = `survey_session_${pid}_${cond}_${timestamp}.json`;
+        const json = JSON.stringify(results, null, 2);
+
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
+</body>
+</html>
