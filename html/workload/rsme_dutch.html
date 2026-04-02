@@ -288,7 +288,7 @@ document.getElementById("submit").addEventListener("click", ()=>{
   else
       document.getElementById("results").outerText = "Bedankt!";
 
-  window.top.postMessage({ success: true, participantData, result }, "*");
+  window.parent.postMessage({ success: true, participantData, result }, "*");
 
   if (fileDownload) downloadResultsJSON({ success: true, participantData, result });
 

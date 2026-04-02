@@ -626,7 +626,7 @@ document.getElementById("submit").addEventListener("click", () => {
 
   displayResults(results);
 
-  window.top.postMessage({ success: true, participantData, results }, "*");
+  window.parent.postMessage({ success: true, participantData, results }, "*");
 
   if (fileDownload) downloadResultsJSON({ success: true, participantData, results });
 

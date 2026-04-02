@@ -307,7 +307,7 @@ document.getElementById("submitBtn").addEventListener("click", () => {
       isCorrect: scored[i] === 1
     }))
   };
-  window.top.postMessage({ success: true, participantData, resultObj }, "*");
+  window.parent.postMessage({ success: true, participantData, resultObj }, "*");
 
   if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
 });

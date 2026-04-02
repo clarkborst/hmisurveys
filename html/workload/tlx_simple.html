@@ -241,7 +241,7 @@ function finish(){
     success:true,
     scales:scales.map((s,i)=>({name:s.name,rating:ratings[i]}))
   };
-  window.top.postMessage(resultObj,"*");
+  window.parent.postMessage(resultObj,"*");
 
   if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
 }

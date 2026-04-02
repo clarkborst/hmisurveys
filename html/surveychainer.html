@@ -156,7 +156,7 @@
             return;
         }
 
-        window.top.postMessage({ success: true, participantData, allResults }, "*");
+        window.top.postMessage({ type: "surveyChainComplete", success: true, participantData, allResults }, "*");
 
         if (fileDownload) downloadResultsJSON({ success: true, participantData, allResults });
 

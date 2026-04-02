@@ -297,7 +297,7 @@
             overall
         };
 
-        window.top.postMessage({ success: true, participantData, resultObj }, "*");
+        window.parent.postMessage({ success: true, participantData, resultObj }, "*");
 
         if (fileDownload) downloadResultsJSON({ success: true, participantData, resultObj });
     });

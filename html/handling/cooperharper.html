@@ -341,7 +341,7 @@
     else
       document.body.innerText = "Thank you!";
 
-    window.top?.postMessage?.({success:true, rating: Number(rating)}, "*");
+    window.parent?.postMessage?.({success:true, rating: Number(rating)}, "*");
 
     if (fileDownload) downloadResultsJSON({ success: true, participantData, rating: Number(rating) });
   }
