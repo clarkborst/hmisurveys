@@ -661,7 +661,7 @@ const surveyConfig = [
 
 Each survey is self-contained and communicates via:
 ```js
-window.top.postMessage(resultObj, "*");
+window.parent.postMessage(resultObj, "*");
 ```
 Javascript, HTML and Python applications can catch these events and message contents,
 allowing for saving and/or further processing.
