@@ -264,7 +264,7 @@ Based on **Taylor (1989, 1990)** and **Endsley (1995)**.
 
 ### ⚙️ 4b. Acceptance: Van der Laan
 **Purpose:**   
-The Van der Laan acceptance ccale is a concise and widely used questionnaire for assessing user acceptance of (automated or intelligent) systems.
+The Van der Laan acceptance scale is a concise and widely used questionnaire for assessing user acceptance of (automated or intelligent) systems.
 It evaluates how useful, satisfying, and overall acceptable a system is perceived to be, using a set of nine bipolar adjective pairs rated on 
 a 5-point semantic differential scale from −2 (very negative) to +2 (very positive).
 

@@ -303,13 +303,31 @@ surveyConfig.forEach((section, idx) => {
       let scaleLabels;
 
       if (isNumeric) {
-        scaleLabels = item.scaleType === 7
-                ? ["1<br>Very<br>Low","2","3","4<br>Neutral","5","6","7<br>Very<br>High"]
-                : ["1<br>Very<br>Low","2","3<br>Neutral","4","5<br>Very<br>High"];
+  	  	const numericScaleLabelOptions = {
+  			5: 	["1<br>Very<br>Low","2","3<br>Neutral","4","5<br>Very<br>High"],
+  			7:  ["1<br>Very<br>Low","2","3","4<br>Neutral","5","6","7<br>Very<br>High"],
+  			9:  ["1<br>Very<br>Low","2","3","4","5<br>Neutral","6","7","8","9<br>Very<br>High"],
+  			11: ["1<br>Very<br>Low","2","3","4","5","6<br>Neutral","7","8","9","10","11<br>Very<br>High"]
+  		}; 
+		
+  		if (item.scaleType in numericScaleLabelOptions) {
+  			scaleLabels = numericScaleLabelOptions[item.scaleType];
+  		} else {
+  			console.error(`Scale labels not found for ${item}`);
+  		}
       } else {
-        scaleLabels = item.scaleType === 7
-                ? ["1<br>Strongly<br>Disagree","2","3","4<br>Neutral","5","6","7<br>Strongly<br>Agree"]
-                : ["1<br>Strongly<br>Disagree","2","3<br>Neutral","4","5<br>Strongly<br>Agree"];
+    	const textualScaleLabelOptions = {
+    		5: 	["1<br>Strongly<br>Disagree","2","3<br>Neutral","4","5<br>Strongly<br>Agree"],
+    		7:  ["1<br>Strongly<br>Disagree","2","3","4<br>Neutral","5","6","7<br>Strongly<br>Agree"],
+  			9:  ["1<br>Strongly<br>Disagree","2","3","4","5<br>Neutral","6","7","8","9<br>Strongly<br>Agree"],
+    		11: ["1<br>Strongly<br>Disagree","2","3","4","5","6<br>Neutral","7","8","9","10","11<br>Strongly<br>Agree"]
+    	}; 
+		
+    	if (item.scaleType in textualScaleLabelOptions) {
+    		scaleLabels = textualScaleLabelOptions[item.scaleType];
+    	} else {
+    		console.error(`Scale labels not found for ${item}`);
+    	}
       }
 
       const table = document.createElement("table");
@@ -348,14 +366,32 @@ surveyConfig.forEach((section, idx) => {
 
       if (isNumeric) {
         // === Numeric-labeled version ===
-        scaleOptions = (item.scaleType === 7)
-                ? ["Very Low", "Low", "Somewhat Low", "Neutral", "Somewhat High", "High", "Very High"]
-                : ["Very Low", "Low", "Neutral", "High", "Very High"];
+    	const numericScaleOptions = {
+    		5: 	["Very Low", "Low", "Neutral", "High", "Very High"],
+    		7:  ["Very Low", "Low", "Somewhat Low", "Neutral", "Somewhat High", "High", "Very High"],
+    		9:  ["Very Low", "Low", "Moderately Low", "Somewhat Low", "Neutral", "Somewhat High", "Moderately High", "High", "Very High"],
+  			11: ["Very Low", "Substantially Low", "Low", "Moderately Low", "Somewhat Low", "Neutral", "Somewhat High", "Moderately High", "High", "Substantially High", "Very High"]
+    	}; 
+		
+    	if (item.scaleType in numericScaleOptions) {
+    		scaleOptions = numericScaleOptions[item.scaleType];
+    	} else {
+    		console.error(`Scale labels not found for ${item}`);
+    	} 
       } else {
         // === Textual-labeled version ===
-        scaleOptions = (item.scaleType === 7)
-                ? ["Strongly Disagree", "Disagree", "Somewhat Disagree", "Neutral", "Somewhat Agree", "Agree", "Strongly Agree"]
-                : ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"];
+  	  	const textualScaleOptions = {
+  			5: 	["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
+  			7:  ["Strongly Disagree", "Disagree", "Somewhat Disagree", "Neutral", "Somewhat Agree", "Agree", "Strongly Agree"],
+  			9:  ["Strongly Disagree", "Disagree", "Moderately Disagree", "Somewhat Disagree", "Neutral", "Somewhat Agree", "Moderately Agree", "Agree", "Strongly Agree"],
+  			11:  ["Strongly Disagree", "Rather Strongly Disagree", "Disagree", "Moderately Disagree", "Somewhat Disagree", "Neutral", "Somewhat Agree", "Moderately Agree", "Agree", "Rather Strongly Agree", "Strongly Agree"]
+  		};
+		
+    	if (item.scaleType in textualScaleOptions) {
+    		scaleOptions = textualScaleOptions[item.scaleType];
+    	} else {
+    		console.error(`Scale labels not found for ${item}`);
+    	} 
       }
 
       const scaleDiv = document.createElement("div");
