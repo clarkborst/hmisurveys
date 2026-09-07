@@ -566,7 +566,55 @@ In the validated UEQ-S layout, all right-hand adjectives represent the positive 
 polarity correction is needed.
 
 
-**IMPORTANT:** This surveys should not be modified to maintain scientific validity.
+**IMPORTANT:** This survey should not be modified to maintain scientific validity.
+
+
+---
+
+### AI4REALNET Novel Questionnaires
+
+As part of the work within the [AI4REALNET](https://ai4realnet.eu/) project, several novel questionnaires have been developed or adapted from previous work to enable evaluating not only the technical performance of
+the models and software, but also the overall performance of AI-human collaborations and attitudes of human operators towards such AI solutions. 
+See the deliverable report "D4.1 – Evaluation and test protocols", Section 5 "Social-technical decision quality" under [https://ai4realnet.eu/deliverables/](https://ai4realnet.eu/deliverables/) for further details.
+
+The following questionnaires have been included in this framework (mainly organized according to the AI4REALNET evaluation objective):
+
+- [Social-Technical Decision Quality](html/social-technical-decision-quality/)
+	- [Perceived Decision Quality](html/social-technical-decision-quality/perceived-decision-quality.html): human operators' self-reported subjective assessment of nontriviality for the AI-generated solutions.
+	- [Significance of Human Revisions](html/social-technical-decision-quality/significance-human-revisions.html): human operators' subjective assessment of necessary revisions for the AI-generated solutions by the human operator. 
+		- Note that the questionnaire includes questions about both *number* and *level* (e.g., minor vs major) of revisions required.
+
+- [AI Acceptability, Trust, and Trustworthiness](html/ai-acceptability-trust-trustworthiness/)
+	- [Agreement Score](html/ai-acceptability-trust-trustworthiness/agreement-score.html): human operators' self-reported agreement with individual AI-generated solutions/decisions on an interval scale.
+		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
+	- [Comprehensibility](html/ai-acceptability-trust-trustworthiness/comprehensibility.html): human operators' self-reported ability to understand and thus make use of the AI-generated solution/decision.
+		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
+	- [Trust in AI Solutions](html/ai-acceptability-trust-trustworthiness/trust-in-ai-solutions.html): human operators' self-reported trust (attitude) for individual AI-generated solutions.
+		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
+	- [Trust Towards the AI Tool](html/ai-acceptability-trust-trustworthiness/trust-towards-ai.html): original Trust between People and Automation (TPA) questionnaire from Jian et al. (2000), studied by Scharowski et al. (2025) with respect to trust and distrust in AI dimensions.
+	- [Acceptance](html/acceptance/acceptance-tam3.html): acceptance of the system by a human user measured according to the TAM3 model (Venkatesh & Bala, 2008). 
+		- Note that the respective questionnaire is located under the [Acceptance](html/acceptance/) directory. 
+
+- [Human-User Experience](html/human-user-experience/)
+	- [Human Motivation](html/human-user-experience/human-motivation.html): operationalized through task and role significance. While task significance stems from a validated questionnaire (Stegman et al., 2010), role significance was developed within the AI4REALNET project.
+	- [Decision Support Satisfaction](html/human-user-experience/decision-support-satisfaction.html): human operators' self-reported satisfaction with the system's support for their decision-making process when working with the AI assistant.
+
+- [AI and Human Learning Curves](html/ai-human-learning-curves/)
+	- [AI Co-Learning Capability](html/ai-human-learning-curves/ai-co-learning-capability.html): human operators' self-reported assessment of the AI ability to adapt to the operators' preferences.
+	- [Human Learning](html/ai-human-learning-curves/human-learning.html): adapted from Ohly & Fritz, 2010 to assess the extent to which participants experience the situation as challenging, manageable, and potentially beneficial for skill development.
+	
+- [Task Allocation Balance](html/human-ai-task-allocation-balance/)
+	- [Human Control/Autonomy over the Process](html/human-ai-task-allocation-balance/human-control-autonomy.html): human operators' perceived autonomy over the process when working with the AI assistant.
+
+- [Long-Term Consequences of AI-Assistants](html/long-term-consequences/)
+	- [Reflection on Operator Trust](html/long-term-consequences/reflection-on-operator-trust.html): human operators' perception of the changes in their trust for the AI assistant over time (increased/decreased).
+	- [Reflection on Operator Agency](html/long-term-consequences/reflection-on-operator-agency.html): human operators' perception of the changes in their agency working with the AI assistant over time (increased/decreased).
+	- [Reflection on Operator Deskilling](html/long-term-consequences/reflection-on-operator-deskilling.html): human operators' perception of the changes in their own skills working with the AI assistant over time (increased/decreased). 
+	- [Reflection on Over-Reliance](html/long-term-consequences/reflection-on-over-reliance.html): human operators' perception of their potential over-reliance on the AI assistant.
+	- [Reflection on Additional Training](html/long-term-consequences/reflection-on-additional-training.html): human operators' perception of the additional training necessary to adopt the AI assistant.
+	- [Reflection on Biases](html/long-term-consequences/reflection-on-biases.html): human operators' perception of biased decisions potentially produced by the AI assistant with respect to gender/ethnicity/age or commercial interests.
+	- [Predicted Long-Term Adoption](html/long-term-consequences/predicted-long-term-adoption.html): predicted adoption of the AI assistant by users, stakeholders, or experts. 
+
 
 ---
 
