@@ -577,16 +577,20 @@ As part of the work within the [AI4REALNET](https://ai4realnet.eu/) project, sev
 the models and software, but also the overall performance of AI-human collaborations and attitudes of human operators towards such AI solutions. 
 See the deliverable report "D4.1 – Evaluation and test protocols", Section 5 "Social-technical decision quality" under [https://ai4realnet.eu/deliverables/](https://ai4realnet.eu/deliverables/) for further details.
 
-The following questionnaires have been included in this framework (mainly organized according to the AI4REALNET evaluation objective):
+The following individual questionnaires have been included in this framework (mainly organized according to the AI4REALNET evaluation objective):
 
 - [Social-Technical Decision Quality](html/social-technical-decision-quality/)
 	- [Perceived Decision Quality](html/social-technical-decision-quality/perceived-decision-quality.html): human operators' self-reported subjective assessment of nontriviality for the AI-generated solutions.
+    - [Perceived Decision Quality (Power Grid)](html/ai-acceptability-trust-trustworthiness/perceived-decision-quality-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
 	- [Significance of Human Revisions](html/social-technical-decision-quality/significance-human-revisions.html): human operators' subjective assessment of necessary revisions for the AI-generated solutions by the human operator. 
 		- Note that the questionnaire includes questions about both *number* and *level* (e.g., minor vs major) of revisions required.
+    - [Significance of Human Revisions (Power Grid)](html/ai-acceptability-trust-trustworthiness/significance-human-revisions-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
 
 - [AI Acceptability, Trust, and Trustworthiness](html/ai-acceptability-trust-trustworthiness/)
+	- [ATAI](html/ai-acceptability-trust-trustworthiness/atai.html): Assessing the Attitude Towards Artificial Intelligence (Sindermann et al., 2021).
 	- [Agreement Score](html/ai-acceptability-trust-trustworthiness/agreement-score.html): human operators' self-reported agreement with individual AI-generated solutions/decisions on an interval scale.
 		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
+    - [Agreement Score (Power Grid)](html/ai-acceptability-trust-trustworthiness/agreement-score-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
 	- [Comprehensibility](html/ai-acceptability-trust-trustworthiness/comprehensibility.html): human operators' self-reported ability to understand and thus make use of the AI-generated solution/decision.
 		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
 	- [Trust in AI Solutions](html/ai-acceptability-trust-trustworthiness/trust-in-ai-solutions.html): human operators' self-reported trust (attitude) for individual AI-generated solutions.
@@ -610,10 +614,17 @@ The following questionnaires have been included in this framework (mainly organi
 	- [Reflection on Operator Trust](html/long-term-consequences/reflection-on-operator-trust.html): human operators' perception of the changes in their trust for the AI assistant over time (increased/decreased).
 	- [Reflection on Operator Agency](html/long-term-consequences/reflection-on-operator-agency.html): human operators' perception of the changes in their agency working with the AI assistant over time (increased/decreased).
 	- [Reflection on Operator Deskilling](html/long-term-consequences/reflection-on-operator-deskilling.html): human operators' perception of the changes in their own skills working with the AI assistant over time (increased/decreased). 
+    - [Reflection on Operator Deskilling (Power Grid)](html/long-term-consequences/reflection-on-operator-deskilling-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
 	- [Reflection on Over-Reliance](html/long-term-consequences/reflection-on-over-reliance.html): human operators' perception of their potential over-reliance on the AI assistant.
 	- [Reflection on Additional Training](html/long-term-consequences/reflection-on-additional-training.html): human operators' perception of the additional training necessary to adopt the AI assistant.
 	- [Reflection on Biases](html/long-term-consequences/reflection-on-biases.html): human operators' perception of biased decisions potentially produced by the AI assistant with respect to gender/ethnicity/age or commercial interests.
 	- [Predicted Long-Term Adoption](html/long-term-consequences/predicted-long-term-adoption.html): predicted adoption of the AI assistant by users, stakeholders, or experts. 
+
+
+The following multi-section questionnaires (implemented with [Survey Chainer (see below)](#-survey-chainer-chaining-multiple-surveys-with-the-survey-orchestrator)) have been included in this framework (organized according to the AI4REALNET domains / task forces and the respective user studes):
+
+- [Power Grid Evaluation](html/ai4realnet-user-studies/power-grid-evaluation.html): including several adjustments in questionnaire formulations to better reflect the experimental design and align with questionnaire translations.
+
 
 
 ---
