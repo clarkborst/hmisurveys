@@ -579,51 +579,58 @@ See the deliverable report "D4.1 – Evaluation and test protocols", Section 5 "
 
 The following individual questionnaires have been included in this framework (mainly organized according to the AI4REALNET evaluation objective):
 
-- [Social-Technical Decision Quality](html/social-technical-decision-quality/)
-	- [Perceived Decision Quality](html/social-technical-decision-quality/perceived-decision-quality.html): human operators' self-reported subjective assessment of nontriviality for the AI-generated solutions.
-    - [Perceived Decision Quality (Power Grid)](html/ai-acceptability-trust-trustworthiness/perceived-decision-quality-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
-	- [Significance of Human Revisions](html/social-technical-decision-quality/significance-human-revisions.html): human operators' subjective assessment of necessary revisions for the AI-generated solutions by the human operator. 
+- [Social-Technical Decision Quality](html/ai4realnet/social-technical-decision-quality/)
+	- [Perceived Decision Novelty](html/ai4realnet/social-technical-decision-quality/perceived-decision-novelty.html): human operators' self-reported subjective assessment of nontriviality for the AI-generated solutions.
+    - [Perceived Decision Novelty (Power Grid)](html/ai4realnet/ai-acceptability-trust-trustworthiness/perceived-decision-novelty-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
+      - [Perceived Decision Novelty (Power Grid) (in French)](html/ai4realnet/ai-acceptability-trust-trustworthiness/perceived-decision-novelty-power-grid-fr.html): questionnaire adjusted for the purposes of Power Grid evaluation, translated into French.
+	- [Significance of Human Revisions](html/ai4realnet/social-technical-decision-quality/significance-human-revisions.html): human operators' subjective assessment of necessary revisions for the AI-generated solutions by the human operator. 
 		- Note that the questionnaire includes questions about both *number* and *level* (e.g., minor vs major) of revisions required.
-    - [Significance of Human Revisions (Power Grid)](html/ai-acceptability-trust-trustworthiness/significance-human-revisions-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
+    - [Significance of Human Revisions (Power Grid)](html/ai4realnet/ai-acceptability-trust-trustworthiness/significance-human-revisions-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
+      - [Significance of Human Revisions (Power Grid) (in French)](html/ai4realnet/ai-acceptability-trust-trustworthiness/significance-human-revisions-power-grid-fr.html): questionnaire adjusted for the purposes of Power Grid evaluation, translated into French.
 
-- [AI Acceptability, Trust, and Trustworthiness](html/ai-acceptability-trust-trustworthiness/)
-	- [ATAI](html/ai-acceptability-trust-trustworthiness/atai.html): Assessing the Attitude Towards Artificial Intelligence (Sindermann et al., 2021).
-	- [Agreement Score](html/ai-acceptability-trust-trustworthiness/agreement-score.html): human operators' self-reported agreement with individual AI-generated solutions/decisions on an interval scale.
+- [AI Acceptability, Trust, and Trustworthiness](html/ai4realnet/ai-acceptability-trust-trustworthiness/)
+	- [ATAI](html/ai4realnet/ai-acceptability-trust-trustworthiness/atai.html): Assessing the Attitude Towards Artificial Intelligence (Sindermann et al., 2021).
+    - [ATAI (in French)](html/ai4realnet/ai-acceptability-trust-trustworthiness/atai.html): Assessing the Attitude Towards Artificial Intelligence (Sindermann et al., 2021), translated into French.
+	- [Agreement Score](html/ai4realnet/ai-acceptability-trust-trustworthiness/agreement-score.html): human operators' self-reported agreement with individual AI-generated solutions/decisions on an interval scale.
 		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
-    - [Agreement Score (Power Grid)](html/ai-acceptability-trust-trustworthiness/agreement-score-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
-	- [Comprehensibility](html/ai-acceptability-trust-trustworthiness/comprehensibility.html): human operators' self-reported ability to understand and thus make use of the AI-generated solution/decision.
+    - [Agreement Score (Power Grid)](html/ai4realnet/ai-acceptability-trust-trustworthiness/agreement-score-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
+      - [Agreement Score (Power Grid) (in French)](html/ai4realnet/ai-acceptability-trust-trustworthiness/agreement-score-power-grid-fr.html): questionnaire adjusted for the purposes of Power Grid evaluation, translated into French.
+	- [Comprehensibility](html/ai4realnet/ai-acceptability-trust-trustworthiness/comprehensibility.html): human operators' self-reported ability to understand and thus make use of the AI-generated solution/decision.
 		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
-	- [Trust in AI Solutions](html/ai-acceptability-trust-trustworthiness/trust-in-ai-solutions.html): human operators' self-reported trust (attitude) for individual AI-generated solutions.
+	- [Trust in AI Solutions](html/ai4realnet/ai-acceptability-trust-trustworthiness/trust-in-ai-solutions.html): human operators' self-reported trust (attitude) for individual AI-generated solutions.
 		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
-	- [Trust Towards the AI Tool](html/ai-acceptability-trust-trustworthiness/trust-towards-ai.html): original Trust between People and Automation (TPA) questionnaire from Jian et al. (2000), studied by Scharowski et al. (2025) with respect to trust and distrust in AI dimensions.
+	- [Trust Towards the AI Tool](html/ai4realnet/ai-acceptability-trust-trustworthiness/trust-towards-ai.html): original Trust between People and Automation (TPA) questionnaire from Jian et al. (2000), studied by Scharowski et al. (2025) with respect to trust and distrust in AI dimensions.
 	- [Acceptance](html/acceptance/acceptance-tam3.html): acceptance of the system by a human user measured according to the TAM3 model (Venkatesh & Bala, 2008). 
 		- Note that the respective questionnaire is located under the [Acceptance](html/acceptance/) directory. 
 
-- [Human-User Experience](html/human-user-experience/)
-	- [Human Motivation](html/human-user-experience/human-motivation.html): operationalized through task and role significance. While task significance stems from a validated questionnaire (Stegman et al., 2010), role significance was developed within the AI4REALNET project.
-	- [Decision Support Satisfaction](html/human-user-experience/decision-support-satisfaction.html): human operators' self-reported satisfaction with the system's support for their decision-making process when working with the AI assistant.
+- [Human-User Experience](html/ai4realnet/human-user-experience/)
+	- [Human Motivation](html/ai4realnet/human-user-experience/human-motivation.html): operationalized through task and role significance. While task significance stems from a validated questionnaire (Stegman et al., 2010), role significance was developed within the AI4REALNET project.
+	- [Decision Support Satisfaction](html/ai4realnet/human-user-experience/decision-support-satisfaction.html): human operators' self-reported satisfaction with the system's support for their decision-making process when working with the AI assistant.
 
-- [AI and Human Learning Curves](html/ai-human-learning-curves/)
-	- [AI Co-Learning Capability](html/ai-human-learning-curves/ai-co-learning-capability.html): human operators' self-reported assessment of the AI ability to adapt to the operators' preferences.
-	- [Human Learning](html/ai-human-learning-curves/human-learning.html): adapted from Ohly & Fritz, 2010 to assess the extent to which participants experience the situation as challenging, manageable, and potentially beneficial for skill development.
+- [AI and Human Learning Curves](html/ai4realnet/ai-human-learning-curves/)
+	- [AI Co-Learning Capability](html/ai4realnet/ai-human-learning-curves/ai-co-learning-capability.html): human operators' self-reported assessment of the AI ability to adapt to the operators' preferences.
+	- [Human Learning](html/ai4realnet/ai-human-learning-curves/human-learning.html): adapted from Ohly & Fritz, 2010 to assess the extent to which participants experience the situation as challenging, manageable, and potentially beneficial for skill development.
 	
-- [Task Allocation Balance](html/human-ai-task-allocation-balance/)
-	- [Human Control/Autonomy over the Process](html/human-ai-task-allocation-balance/human-control-autonomy.html): human operators' perceived autonomy over the process when working with the AI assistant.
+- [Task Allocation Balance](html/ai4realnet/human-ai-task-allocation-balance/)
+	- [Human Control/Autonomy over the Process](html/ai4realnet/human-ai-task-allocation-balance/human-control-autonomy.html): human operators' perceived autonomy over the process when working with the AI assistant.
 
-- [Long-Term Consequences of AI-Assistants](html/long-term-consequences/)
-	- [Reflection on Operator Trust](html/long-term-consequences/reflection-on-operator-trust.html): human operators' perception of the changes in their trust for the AI assistant over time (increased/decreased).
-	- [Reflection on Operator Agency](html/long-term-consequences/reflection-on-operator-agency.html): human operators' perception of the changes in their agency working with the AI assistant over time (increased/decreased).
-	- [Reflection on Operator Deskilling](html/long-term-consequences/reflection-on-operator-deskilling.html): human operators' perception of the changes in their own skills working with the AI assistant over time (increased/decreased). 
-    - [Reflection on Operator Deskilling (Power Grid)](html/long-term-consequences/reflection-on-operator-deskilling-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
-	- [Reflection on Over-Reliance](html/long-term-consequences/reflection-on-over-reliance.html): human operators' perception of their potential over-reliance on the AI assistant.
-	- [Reflection on Additional Training](html/long-term-consequences/reflection-on-additional-training.html): human operators' perception of the additional training necessary to adopt the AI assistant.
-	- [Reflection on Biases](html/long-term-consequences/reflection-on-biases.html): human operators' perception of biased decisions potentially produced by the AI assistant with respect to gender/ethnicity/age or commercial interests.
-	- [Predicted Long-Term Adoption](html/long-term-consequences/predicted-long-term-adoption.html): predicted adoption of the AI assistant by users, stakeholders, or experts. 
+- [Long-Term Consequences of AI-Assistants](html/ai4realnet/long-term-consequences/)
+	- [Reflection on Operator Trust](html/ai4realnet/long-term-consequences/reflection-on-operator-trust.html): human operators' perception of the changes in their trust for the AI assistant over time (increased/decreased).
+	- [Reflection on Operator Agency](html/ai4realnet/long-term-consequences/reflection-on-operator-agency.html): human operators' perception of the changes in their agency working with the AI assistant over time (increased/decreased).
+	- [Reflection on Operator Deskilling](html/ai4realnet/long-term-consequences/reflection-on-operator-deskilling.html): human operators' perception of the changes in their own skills working with the AI assistant over time (increased/decreased). 
+    - [Reflection on Operator Deskilling (Power Grid)](html/ai4realnet/long-term-consequences/reflection-on-operator-deskilling-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
+      - [Reflection on Operator Deskilling (Power Grid) (in French)](html/ai4realnet/long-term-consequences/reflection-on-operator-deskilling-power-grid-fr.html): questionnaire adjusted for the purposes of Power Grid evaluation, translated into French.
+	- [Reflection on Over-Reliance](html/ai4realnet/long-term-consequences/reflection-on-over-reliance.html): human operators' perception of their potential over-reliance on the AI assistant.
+	- [Reflection on Additional Training](html/ai4realnet/long-term-consequences/reflection-on-additional-training.html): human operators' perception of the additional training necessary to adopt the AI assistant.
+	- [Reflection on Biases](html/ai4realnet/long-term-consequences/reflection-on-biases.html): human operators' perception of biased decisions potentially produced by the AI assistant with respect to gender/ethnicity/age or commercial interests.
+	- [Predicted Long-Term Adoption](html/ai4realnet/long-term-consequences/predicted-long-term-adoption.html): predicted adoption of the AI assistant by users, stakeholders, or experts. 
+    - [Predicted Long-Term Adoption (in French)](html/ai4realnet/long-term-consequences/predicted-long-term-adoption.html): predicted adoption of the AI assistant by users, stakeholders, or experts, translated into French. 
 
 
 The following multi-section questionnaires (implemented with [Survey Chainer (see below)](#-survey-chainer-chaining-multiple-surveys-with-the-survey-orchestrator)) have been included in this framework (organized according to the AI4REALNET domains / task forces and the respective user studes):
 
-- [Power Grid Evaluation](html/ai4realnet-user-studies/power-grid-evaluation.html): including several adjustments in questionnaire formulations to better reflect the experimental design and align with questionnaire translations.
+- [Power Grid Evaluation](html/ai4realnet/ai4realnet-user-studies/power-grid-evaluation.html): including several adjustments in questionnaire formulations to better reflect the experimental design and align with questionnaire translations.
+  - [Power Grid Evaluation (in French)](html/ai4realnet/ai4realnet-user-studies/power-grid-evaluation-fr.html): translated into French. 
 
 
 
