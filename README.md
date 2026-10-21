@@ -260,6 +260,15 @@ Based on **Taylor (1989, 1990)** and **Endsley (1995)**.
 
 **Output:** Composite acceptance (experimental!) score and subscale means (Usefulness, Ease of Use, Intention to Use).
 
+#### 4a*. Acceptance: Technology Acceptance (TAM3)
+
+Please note that a questionnaire based on **TAM3** and comprising a *subset* of items focusing on perceived usefulness (PU), perceived ease of use (PEOU), and behavioral intention (BI) is also available.
+
+**Scientific Basis:**
+- Venkatesh, V., & Bala, H. (2008). *Technology Acceptance Model 3 and a research agenda on interventions.*, Decision Sciences, 39 (2), 273-315.
+
+
+
 ---
 
 ### ⚙️ 4b. Acceptance: Van der Laan
@@ -501,7 +510,7 @@ corresponding to a particular deficiency in operator support.
 
 ---
 
-### 💻 8. User Experience Questionnaire (UEQ)
+### 💻 8a. Usability: User Experience Questionnaire (UEQ)
 
 **Purpose:**   
 Measure **subjective user experience** across key UX dimensions such as efficiency, clarity, stimulation, and novelty.
@@ -571,6 +580,20 @@ polarity correction is needed.
 
 ---
 
+### 💻 8b. Usability: UMUX-LITE
+
+**UMUX-LITE** is an extremely lightweight **perceived usability** questionnaire based on the Usability Metric for User Experience (UMUX). UMUX-LITE comprises just two items and it has demonstrated high reliability and consistency with more extensive usability questionnaires across multiple studies. The standard version of UMUX-LITE uses a 7-point Likert scale. Versions with 5 and 11 points have also been validated in prior work.
+
+**📚 Scientific Foundations**  
+- Lewis, J. R., Utesch, B. S., & Maher, D. E. (2013). UMUX-LITE: When there's no time for the SUS. In Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (pp. 2099-2102). https://doi.org/10.1145/2470654.2481287
+- Sauro, J. (2021). Measuring usability: From the SUS to the UMUX-Lite. https://measuringu.com/umux-lite/ (last accessed on 2026-10-21)
+- Lewis, J. R. (2021). Measuring user experience with 3, 5, 7, or 11 points: Does it matter?. Human Factors, 63(6), 999-1011. https://doi.org/10.1177/0018720819881312
+
+
+**IMPORTANT:** This survey should not be modified to maintain scientific validity.
+
+---
+
 ### AI4REALNET Novel Questionnaires
 
 As part of the work within the [AI4REALNET](https://ai4realnet.eu/) project, several novel questionnaires have been developed or adapted from previous work to enable evaluating not only the technical performance of
@@ -597,8 +620,10 @@ The following individual questionnaires have been included in this framework (ma
       - [Agreement Score (Power Grid) (in French)](html/ai4realnet/ai-acceptability-trust-trustworthiness/agreement-score-power-grid-fr.html): questionnaire adjusted for the purposes of Power Grid evaluation, translated into French.
 	- [Comprehensibility](html/ai4realnet/ai-acceptability-trust-trustworthiness/comprehensibility.html): human operators' self-reported ability to understand and thus make use of the AI-generated solution/decision.
 		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
+    - [Comprehensibility (ATM)](html/ai4realnet/ai-acceptability-trust-trustworthiness/comprehensibility-atm.html): questionnaire adjusted for the purposes of ATM evaluation (focusing on the overall evaluation rather than individual events/solutions/decisions).
 	- [Trust in AI Solutions](html/ai4realnet/ai-acceptability-trust-trustworthiness/trust-in-ai-solutions.html): human operators' self-reported trust (attitude) for individual AI-generated solutions.
 		- Note that the questionnaire form allows the user to add further responses to allow for evaluation of multiple events during an evaluation session.
+    - [Trust in AI Solutions (ATM)](html/ai4realnet/ai-acceptability-trust-trustworthiness/trust-in-ai-solutions-atm.html): questionnaire adjusted for the purposes of ATM evaluation (focusing on the overall evaluation rather than individual events/solutions/decisions).
 	- [Trust Towards the AI Tool](html/ai4realnet/ai-acceptability-trust-trustworthiness/trust-towards-ai.html): original Trust between People and Automation (TPA) questionnaire from Jian et al. (2000), studied by Scharowski et al. (2025) with respect to trust and distrust in AI dimensions.
 	- [Acceptance](html/acceptance/acceptance-tam3.html): acceptance of the system by a human user measured according to the TAM3 model (Venkatesh & Bala, 2008). 
 		- Note that the respective questionnaire is located under the [Acceptance](html/acceptance/) directory. 
@@ -616,6 +641,7 @@ The following individual questionnaires have been included in this framework (ma
 
 - [Long-Term Consequences of AI-Assistants](html/ai4realnet/long-term-consequences/)
 	- [Reflection on Operator Trust](html/ai4realnet/long-term-consequences/reflection-on-operator-trust.html): human operators' perception of the changes in their trust for the AI assistant over time (increased/decreased).
+    - [Reflection on Operator Trust (ATM)](html/ai4realnet/long-term-consequences/reflection-on-operator-trust-atm.html): questionnaire adjusted for the purposes of ATM evaluation.
 	- [Reflection on Operator Agency](html/ai4realnet/long-term-consequences/reflection-on-operator-agency.html): human operators' perception of the changes in their agency working with the AI assistant over time (increased/decreased).
 	- [Reflection on Operator Deskilling](html/ai4realnet/long-term-consequences/reflection-on-operator-deskilling.html): human operators' perception of the changes in their own skills working with the AI assistant over time (increased/decreased). 
     - [Reflection on Operator Deskilling (Power Grid)](html/ai4realnet/long-term-consequences/reflection-on-operator-deskilling-power-grid.html): questionnaire adjusted for the purposes of Power Grid evaluation.
@@ -632,6 +658,7 @@ The following multi-section questionnaires (implemented with [Survey Chainer (se
 - [Power Grid Evaluation](html/ai4realnet/ai4realnet-user-studies/power-grid-evaluation.html): including several adjustments in questionnaire formulations to better reflect the experimental design and align with questionnaire translations.
   - [Power Grid Evaluation (in French)](html/ai4realnet/ai4realnet-user-studies/power-grid-evaluation-fr.html): translated into French. 
 
+- [ATM Evaluation (Work in Progress!!!)](html/ai4realnet/ai4realnet-user-studies/atm-evaluation.html): including several adjustments in questionnaire formulations to better reflect the experimental design.
 
 
 ---
